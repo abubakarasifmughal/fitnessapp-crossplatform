@@ -1,7 +1,7 @@
 import { Alert, Button, Dimensions, NativeAppEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
-const CalibrationSettingsPage = ({ navigation }: { navigation: any }) => {
+const CalibrationPage = ({ navigation }: { navigation: any }) => {
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       {/* <Button
@@ -140,7 +140,7 @@ const CalibrationSettingsPage = ({ navigation }: { navigation: any }) => {
   )
 }
 
-export default CalibrationSettingsPage
+export default CalibrationPage
 
 const styles = StyleSheet.create({
   h1: { fontSize: 20, fontWeight: '500' },

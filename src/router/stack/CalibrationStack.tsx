@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import CalibrationSettingsPage from '../../screens/CalibrationSettingsPage'
-import SettingsForCalibrationPage from '../../screens/Settings'
+import CalibrationSettingsPage from '../../screens/CalibrationPage'
+import Settings from '../../screens/Settings'
+import CalibrationPage from '../../screens/CalibrationPage'
 
 
 const Stack = createNativeStackNavigator()
 
-const CalibrationSettingsStack = () => {
+const CalibrationStack = () => {
     return (
         <View style={{ height: '100%', }}>
             <Stack.Navigator initialRouteName="Home" screenOptions={{
@@ -16,16 +17,16 @@ const CalibrationSettingsStack = () => {
                 headerTintColor:'black',
                 headerTitleAlign:'center'
             }}>
-                <Stack.Screen name={'Calibrations'} component={SettingsForCalibrationPage} options={{
+                <Stack.Screen name={'Calibrations'} component={Settings} options={{
                 title:"Settings"
                 }}/>
-                <Stack.Screen name={'Calibration Settings'} component={CalibrationSettingsPage} />
+                <Stack.Screen name={'Calibration Settings'} component={CalibrationPage} />
             </Stack.Navigator>
         </View>
     )
 }
 
-export default CalibrationSettingsStack
+export default CalibrationStack;
 
 const styles = StyleSheet.create({})
 

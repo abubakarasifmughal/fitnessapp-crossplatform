@@ -3,14 +3,14 @@ import AboutPage from "../../screens/AboutPage"
 import Plans from "../../screens/Plans"
 import StatsPage from "../../screens/StatsPage"
 import Trainings from "../../screens/Trainings"
-import CalibrationSettingsStack from "../stack/CalibrationSettingsStack"
+import CalibrationStack from "../stack/CalibrationStack"
 
 const iconStyle = { height: 20, width: 20 }
 
 const Routes = [
     {
         name: 'Calibration',
-        component: CalibrationSettingsStack,
+        component: CalibrationStack,
         headerShown:false,
         icons: (active: boolean) => <Image source={require('../../../assets/settings.png')}
         style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
