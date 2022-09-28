@@ -73,7 +73,7 @@ const BottomTabs = () => {
                 <Tab.Screen key={index} name={route.name} component={route.component} options={{
                   tabBarIcon: () => route.icons(navRef.getCurrentRoute()?.name.includes(route.name) ?? true),
                   tabBarStyle: { paddingBottom: 5, paddingTop: 5, },
-                  tabBarActiveTintColor: 'black',
+                  tabBarActiveTintColor: 'red',
                   headerShown: route.headerShown
                 }}
                 />

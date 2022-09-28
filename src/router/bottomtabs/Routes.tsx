@@ -1,4 +1,5 @@
 import { Image } from "react-native"
+import AboutPage from "../../screens/AboutPage"
 import Plans from "../../screens/Plans"
 import StatsPage from "../../screens/StatsPage"
 import Trainings from "../../screens/Trainings"
@@ -12,7 +13,7 @@ const Routes = [
         component: CalibrationSettingsStack,
         headerShown:false,
         icons: (active: boolean) => <Image source={require('../../../assets/settings.png')}
-        style={[iconStyle, { tintColor: active ? 'black' : 'gray' }]}
+        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />
     },
     {
@@ -20,7 +21,7 @@ const Routes = [
         component: Plans,
         headerShown:true,
         icons: (active: boolean) => <Image source={require('../../../assets/calendar.png')}
-        style={[iconStyle, { tintColor: active ? 'black' : 'gray' }]}
+        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />
         
     },
@@ -29,7 +30,7 @@ const Routes = [
         component: Trainings,
         headerShown:true,
         icons: (active: boolean) => <Image source={require('../../../assets/trainings.png')}
-        style={[iconStyle, { tintColor: active ? 'black' : 'gray' }]}
+        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />
     },
     {
@@ -37,15 +38,15 @@ const Routes = [
         component: StatsPage,
         headerShown:true,
         icons: (active: boolean) => <Image source={require('../../../assets/stats.png')}
-        style={[iconStyle, { tintColor: active ? 'black' : 'gray' }]}
+        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />
     },
     {
         name: 'About',
-        component: StatsPage,
+        component: AboutPage,
         headerShown:true,
         icons: (active: boolean) => <Image source={require('../../../assets/info.png')}
-        style={[iconStyle, { tintColor: active ? 'black' : 'gray' }]}
+        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
             resizeMode="contain" />
     },
 ]

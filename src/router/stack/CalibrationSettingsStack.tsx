@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import CalibrationSettingsPage from '../../screens/CalibrationSettingsPage'
-import SettingsForCalibrationPage from '../../screens/SettingsForCalibrationPage'
+import SettingsForCalibrationPage from '../../screens/Settings'
 
 
 const Stack = createNativeStackNavigator()

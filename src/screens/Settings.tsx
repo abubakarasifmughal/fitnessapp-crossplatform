@@ -1,4 +1,4 @@
-import { Alert, Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { Device, BleManager as bleManager } from 'react-native-ble-plx';
 
@@ -7,10 +7,12 @@ import RadioButton from '../components/RadioButton';
 
 
 
-const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
+const Settings = ({ navigation, }: { navigation: any }) => {
   // const manager = new BleManager();
   const [devicesArr, setDevicesArr] = useState([])
   const [Mode, setMode] = useState("")
+  const [ConnectedDevice, setConnectedDevice] = useState("")
+  const [ConnectedDeviceID, setConnectedDeviceID] = useState("")
 
   return (
     <View style={{ paddingTop: 10, alignItems: 'center', height: "100%" }}>
@@ -37,8 +39,15 @@ const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
         />
       </View>
 
+      <View style={[styles.inputWithLabel,{justifyContent:'center'}]}>
+        <TextInput style={styles.inputField} 
+        placeholder={'If in poor in poor position notify me in '}/>
+      </View>
+
       <Text style={styles.h1}>Bluetooth Connection</Text>
-      <View style={{ flexDirection: 'row', width: '90%', }}>
+      <View style={{
+        flexDirection: 'row', width: '90%', paddingBottom: 10,
+      }}>
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
           onPress={() => {
@@ -64,7 +73,14 @@ const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
 
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
-          onPress={() => { }}>
+          onPress={() => {
+            manager.cancelDeviceConnection(ConnectedDeviceID)
+              .then((val) => {
+                Alert.alert("diconnected " + ConnectedDevice);
+                setConnectedDevice("")
+                setConnectedDeviceID("")
+              })
+          }}>
           <Text style={styles.ButtonText}>
             Disconnect
           </Text>
@@ -73,18 +89,24 @@ const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
 
 
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, width: '90%', alignSelf: 'center' }}>
         <ScrollView contentContainerStyle={{
-          alignItems:'flex-start'
-        }}>
+          alignItems: 'flex-start',
+          width: "100%",
+          paddingTop: 10,
+        }}
+          style={{ width: '100%', }}>
           {
             devicesArr.map((data: Device, index) => {
               return (
                 <TouchableOpacity key={index}
+                  style={{ width: '100%', marginBottom: 10 }}
                   onLongPress={() => {
                     manager.cancelDeviceConnection(data.id)
                       .then((val) => {
                         Alert.alert("diconnected " + val.name);
+                        setConnectedDevice("")
+                        setConnectedDeviceID("")
                       })
                   }}
                   onPress={() => {
@@ -93,6 +115,8 @@ const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
                     })
                       .then((dev) => {
                         Alert.alert("Connected " + dev.name);
+                        setConnectedDevice(dev.name ?? "")
+                        setConnectedDeviceID(dev.id)
                         clearInterval(scanningIntervalID)
                         manager.stopDeviceScan()
                       })
@@ -102,9 +126,18 @@ const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
                         manager.stopDeviceScan()
                       })
                   }}>
-                  <View style={{ padding: 5, borderBottomColor: 'gray', borderBottomWidth: 1, width: '80%' }}>
-                    <Text style={{ padding: 5 }}>{data.id}</Text>
-                    <Text style={{ padding: 5 }}>{data.name}</Text>
+                  <View style={{
+                    padding: 5, borderBottomColor: 'gray', borderBottomWidth: 1, flexDirection: 'row',
+                    justifyContent: 'space-between', alignItems: 'center'
+                  }}>
+                    <View style={{}}>
+                      <Text style={{ marginBottom: 5, fontSize: 18, fontWeight: '600' }}>{data.name}</Text>
+                      <Text style={{ padding: 0, }}>{data.id}</Text>
+                    </View>
+                    {
+                      data.name === ConnectedDevice &&
+                      <Text>✅</Text>
+                    }
                   </View>
                 </TouchableOpacity>
               )
@@ -153,7 +186,7 @@ const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
   )
 }
 
-export default SettingsForCalibrationPage
+export default Settings
 
 const styles = StyleSheet.create({
   h1: { fontSize: 19, fontWeight: 'bold', alignSelf: 'center', width: "90%", },
@@ -167,4 +200,9 @@ const styles = StyleSheet.create({
     marginTop: 30, borderRadius: 5, flexDirection: 'row', justifyContent: 'center'
   },
   ButtonText: { color: 'white', fontWeight: '600', fontSize: 18, textAlign: 'center' },
+  inputWithLabel: {
+    flexDirection: 'row', justifyContent: 'flex-start', width: '100%',
+    marginTop: 20, marginBottom: 20,
+  },
+  inputField: { borderBottomColor: 'red', width: "85%",borderBottomWidth: 2,fontSize:20,padding:5 },
 })
