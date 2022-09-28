@@ -1,6 +1,7 @@
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import RadioButton from '../components/RadioButton';
+import useBLE from '../shared/useBle';
 
 
 
@@ -10,6 +11,17 @@ const Settings = ({ navigation, }: { navigation: any }) => {
   const [Mode, setMode] = useState("")
   const [ConnectedDevice, setConnectedDevice] = useState("")
   const [ConnectedDeviceID, setConnectedDeviceID] = useState("")
+
+  const { requstPermissions,scanForDevices,ScannedDevices } = useBLE()
+
+  const openModalForPermissions = async () => {
+    requstPermissions((result:boolean) => {
+      // Alert.alert("Bluetooth Permission was granted  " + result) 
+      if (result) {
+        scanForDevices()
+      }
+    })
+  }
 
   return (
     <View style={{ paddingTop: 10, alignItems: 'center', height: "100%" }}>
@@ -36,9 +48,9 @@ const Settings = ({ navigation, }: { navigation: any }) => {
         />
       </View>
 
-      <View style={[styles.inputWithLabel,{justifyContent:'center'}]}>
-        <TextInput style={styles.inputField} 
-        placeholder={'If in poor in poor position notify me in '}/>
+      <View style={[styles.inputWithLabel, { justifyContent: 'center' }]}>
+        <TextInput style={styles.inputField}
+          placeholder={'If in poor in poor position notify me in '} />
       </View>
 
       <Text style={styles.h1}>Bluetooth Connection</Text>
@@ -48,7 +60,7 @@ const Settings = ({ navigation, }: { navigation: any }) => {
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
           onPress={() => {
-
+            openModalForPermissions()
           }}>
           <Text style={styles.ButtonText}>
             Start Scan
@@ -77,7 +89,7 @@ const Settings = ({ navigation, }: { navigation: any }) => {
         }}
           style={{ width: '100%', }}>
           {
-            devicesArr.map((data: any, index) => {
+            ScannedDevices.map((data: any, index) => {
               return (
                 <TouchableOpacity key={index}
                   style={{ width: '100%', marginBottom: 10 }}
@@ -96,8 +108,8 @@ const Settings = ({ navigation, }: { navigation: any }) => {
                       <Text style={{ padding: 0, }}>{data.id}</Text>
                     </View>
                     {
-                      data.name === ConnectedDevice &&
-                      <Text>✅</Text>
+                      data.name === ConnectedDevice || true &&
+                      <Text style={{fontSize:20}}>✔️</Text>
                     }
                   </View>
                 </TouchableOpacity>
@@ -165,5 +177,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'flex-start', width: '100%',
     marginTop: 20, marginBottom: 20,
   },
-  inputField: { borderBottomColor: 'red', width: "85%",borderBottomWidth: 2,fontSize:20,padding:5 },
+  inputField: { borderBottomColor: 'red', width: "85%", borderBottomWidth: 2, fontSize: 20, padding: 5 },
 })

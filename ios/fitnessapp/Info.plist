@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
+<dict> 
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>This would like to access your device&apos;s bluetooth</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This would like to access your dev ice&apos;s bluetooth</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
