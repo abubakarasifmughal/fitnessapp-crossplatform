@@ -60,7 +60,6 @@ const BottomTabs = () => {
         ref={navRef}
         onStateChange={
           (val) => {
-            console.log(val?.routeNames[val?.index]);
             
           }
         }
