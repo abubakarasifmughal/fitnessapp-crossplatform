@@ -58,6 +58,12 @@ const BottomTabs = () => {
     <View style={{ height: '100%' }}>
       <NavigationContainer
         ref={navRef}
+        onStateChange={
+          (val) => {
+            console.log(val?.routeNames[val?.index]);
+            
+          }
+        }
       >
         <Tab.Navigator screenOptions={{
           headerTitleAlign: 'center'

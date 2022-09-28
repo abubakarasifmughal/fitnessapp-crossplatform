@@ -7,7 +7,7 @@ import RadioButton from '../components/RadioButton';
 
 
 
-const SettingsPage = ({ navigation, }: { navigation: any }) => {
+const SettingsForCalibrationPage = ({ navigation, }: { navigation: any }) => {
   // const manager = new BleManager();
   const [devicesArr, setDevicesArr] = useState([])
   const [Mode, setMode] = useState("")
@@ -153,7 +153,7 @@ const SettingsPage = ({ navigation, }: { navigation: any }) => {
   )
 }
 
-export default SettingsPage
+export default SettingsForCalibrationPage
 
 const styles = StyleSheet.create({
   h1: { fontSize: 19, fontWeight: 'bold', alignSelf: 'center', width: "90%", },
