@@ -6,7 +6,6 @@ import { BottomTabs } from './src/router/bottomtabs/BottomTabs';
 
 const App = () => {
   return (
-
     <SafeAreaView style={{ overflow: 'scroll' }}>
       <BottomTabs />
     </SafeAreaView>

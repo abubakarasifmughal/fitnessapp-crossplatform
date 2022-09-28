@@ -1,8 +1,6 @@
 import { Alert, Button, Dimensions, NativeAppEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
-import { manager } from '../router/bottomtabs/BottomTabs';
-import { Device } from 'react-native-ble-plx';
 const CalibrationSettingsPage = ({ navigation }: { navigation: any }) => {
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>

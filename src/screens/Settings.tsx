@@ -1,8 +1,5 @@
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { Device, BleManager as bleManager } from 'react-native-ble-plx';
-
-import { manager, scanningIntervalID, scanDevicesAround } from '../router/bottomtabs/BottomTabs';
 import RadioButton from '../components/RadioButton';
 
 
@@ -51,19 +48,7 @@ const Settings = ({ navigation, }: { navigation: any }) => {
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
           onPress={() => {
-            manager.disable()
-            manager.enable()
-            clearInterval(scanningIntervalID)
-            setDevicesArr([])
-            let scanningIntervalIDlocal = setInterval(() => {
-              scanDevicesAround(manager, devicesArr, setDevicesArr)
-            }, 100)
 
-            setTimeout(() => {
-              Alert.alert("Scanning finished")
-              clearInterval(scanningIntervalIDlocal)
-              manager.stopDeviceScan()
-            }, 5000)
           }}>
           <Text style={styles.ButtonText}>
             Start Scan
@@ -74,12 +59,7 @@ const Settings = ({ navigation, }: { navigation: any }) => {
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
           onPress={() => {
-            manager.cancelDeviceConnection(ConnectedDeviceID)
-              .then((val) => {
-                Alert.alert("diconnected " + ConnectedDevice);
-                setConnectedDevice("")
-                setConnectedDeviceID("")
-              })
+
           }}>
           <Text style={styles.ButtonText}>
             Disconnect
@@ -97,34 +77,15 @@ const Settings = ({ navigation, }: { navigation: any }) => {
         }}
           style={{ width: '100%', }}>
           {
-            devicesArr.map((data: Device, index) => {
+            devicesArr.map((data: any, index) => {
               return (
                 <TouchableOpacity key={index}
                   style={{ width: '100%', marginBottom: 10 }}
                   onLongPress={() => {
-                    manager.cancelDeviceConnection(data.id)
-                      .then((val) => {
-                        Alert.alert("diconnected " + val.name);
-                        setConnectedDevice("")
-                        setConnectedDeviceID("")
-                      })
+
                   }}
                   onPress={() => {
-                    manager.connectToDevice(data.id, {
-                      autoConnect: true
-                    })
-                      .then((dev) => {
-                        Alert.alert("Connected " + dev.name);
-                        setConnectedDevice(dev.name ?? "")
-                        setConnectedDeviceID(dev.id)
-                        clearInterval(scanningIntervalID)
-                        manager.stopDeviceScan()
-                      })
-                      .catch(err => {
-                        console.log(err);
-                        clearInterval(scanningIntervalID)
-                        manager.stopDeviceScan()
-                      })
+
                   }}>
                   <View style={{
                     padding: 5, borderBottomColor: 'gray', borderBottomWidth: 1, flexDirection: 'row',
