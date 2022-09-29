@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native'
+import { Alert, Easing, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -24,14 +24,26 @@ const BottomTabs = () => {
         }
       >
         <Tab.Navigator screenOptions={{
-          headerTitleAlign: 'center'
+          headerTitleAlign: 'center',
+          tabBarHideOnKeyboard:true,
+          tabBarAllowFontScaling:true,
+          tabBarLabelPosition:'below-icon',
+          tabBarVisibilityAnimationConfig:{
+            show:{animation:'timing',config:{
+              easing:Easing.bounce,
+              duration:1000,    
+            }}
+          },
         }}>
           {
             Routes.map((route, index) => {
               return (
                 <Tab.Screen key={index} name={route.name} component={route.component} options={{
                   tabBarIcon: () => route.icons(navRef.getCurrentRoute()?.name.includes(route.name) ?? true),
-                  tabBarStyle: { paddingBottom: 5, paddingTop: 5, },
+                  tabBarStyle: { paddingBottom: 5, paddingTop: 5,shadowOffset:{width:0,height:0,},
+                  shadowRadius:2,
+                  shadowOpacity:0.5,
+                  shadowColor:'gray', },
                   tabBarActiveTintColor: 'red',
                   headerShown: route.headerShown
                 }}

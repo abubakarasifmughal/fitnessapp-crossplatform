@@ -12,7 +12,9 @@ const StatsPage = ({ navigation }: any) => {
 
     return (
         <ScrollView>
-            <View style={{ height: 20 }} />
+            <TouchableOpacity onPress={() => {
+                 setPointerLocation(90)
+            }} style={{ height: 40 }} />
             <TestNameInputField />
             <PointerSlider
                 LowerBoundary={LowerBoundary}
@@ -36,9 +38,6 @@ const StatsPage = ({ navigation }: any) => {
             />
             <Pie_Chart />
             <View style={{ height: 120 }} />
-            <Text onPress={() => {
-                setPointerLocation(90)
-            }}>C</Text>
         </ScrollView>
     )
 }
