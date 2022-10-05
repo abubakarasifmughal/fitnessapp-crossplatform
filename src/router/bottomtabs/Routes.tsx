@@ -1,9 +1,9 @@
 import { Image } from "react-native"
 import AboutPage from "../../screens/AboutPage"
-import Plans from "../../screens/Plans"
 import StatsPage from "../../screens/StatsPage"
-import Trainings from "../../screens/Trainings"
 import CalibrationStack from "../stack/CalibrationStack"
+import PlanStack from "../stack/PlanStack"
+import TrainingsStack from "../stack/TrainingsStack"
 
 const iconStyle = { height: 20, width: 20 }
 
@@ -17,9 +17,9 @@ const Routes = [
         resizeMode="contain" />
     },
     {
-        name: 'Plans',
-        component: Plans,
-        headerShown:true,
+        name: 'Plan',
+        component: PlanStack,
+        headerShown:false,
         icons: (active: boolean) => <Image source={require('../../../assets/calendar.png')}
         style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />
@@ -27,8 +27,8 @@ const Routes = [
     },
     {
         name: 'Trainings',
-        component: Trainings,
-        headerShown:true,
+        component: TrainingsStack,
+        headerShown:false,
         icons: (active: boolean) => <Image source={require('../../../assets/trainings.png')}
         style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />

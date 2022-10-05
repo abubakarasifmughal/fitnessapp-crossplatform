@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import TrainingItem from '../components/TrainingItem'
 
-const Trainings = () => {
+const Trainings = ({navigation}:{navigation:any}) => {
     return (
         <ScrollView>
             <View style={{ height: 5 }} />
@@ -14,11 +14,13 @@ const Trainings = () => {
                 WORKOUT COLLECTION
             </Text>
             <TrainingItem
+                navigation={navigation}
                 image={require('../../assets/remove_pointer.png')}
                 title={'Physio led Back plan'}
                 subtitle={'Follow a plan designed by a chartered physiotherapist'}
-            />
+                />
             <TrainingItem
+                navigation={navigation}
                 image={require('../../assets/remove_pointer.png')}
                 title={'Physio led Back plan'}
                 subtitle={'Follow a plan designed by a chartered physiotherapist'}

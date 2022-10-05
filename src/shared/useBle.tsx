@@ -7,8 +7,7 @@ import { atob } from "react-native-quick-base64";
  * -------------------------------------------------------
  * | Characteristics extracted from the java source code |
  * -------------------------------------------------------
- * private static final String CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
- * 
+ * private static final String CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb"  ;
  * private final static String CHARACTERISTIC_READABLE = "4ac8a682-9736-4e5d-932b-e9b31405049c";
  * private final static String CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
  */
@@ -17,6 +16,11 @@ const DEVICE_ID = "FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B";
 const CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 const CHARACTERISTIC_READABLE = "4ac8a682-9736-4e5d-932b-e9b31405049c";
 const CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
+
+
+// Readible : 4ac8a682-9736-4e5d-932b-e9b31405049c
+// CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
+
 
 type PermissionCallback = (result: boolean) => void
 
@@ -109,8 +113,6 @@ export default function useBLE(): BluetoothLowEnergyApi {
                 console.log(value.serviceData);
                 console.log(value.serviceData);
                 console.log("Device Characteristics END----");
-                
-                
             })
 
             device.monitorCharacteristicForService(
