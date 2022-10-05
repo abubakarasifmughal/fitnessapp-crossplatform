@@ -8,10 +8,10 @@ const PlanDetailPage = ({ navigation, route }: { navigation: any, route: any }) 
   }, [navigation, route])
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 5 }}>
+    <ScrollView contentContainerStyle={{ padding: 10 }}>
       <Image
         source={require('../../assets/pointer.png')}
-        style={{ backgroundColor: 'rgb(200,200,200)', height: height / 4, width: "100%", borderRadius: 10 }}
+        style={{ backgroundColor: 'rgb(200,200,200)', height: height / 4, width: "100%", borderRadius: 10, }}
         resizeMode="cover"
       />
       <Text style={{ paddingLeft: 15, fontWeight: '600', fontSize: 20, marginTop: 25 }}>{route.params.title}</Text>
@@ -25,7 +25,7 @@ const PlanDetailPage = ({ navigation, route }: { navigation: any, route: any }) 
         >Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas incidunt exercitationem sapiente architecto laudantium obcaecati inventore? Similique, accusamus, eos, debitis dicta perspiciatis dolorum adipisci odit hic quos nulla voluptas aut!</Text>
       </View>
       <View style={{ flexDirection: 'row', padding: 5 }}>
-        <Image source={require('../../assets/finish-flag.png')}
+        <Image source={require('../../assets/calendar.png')}
           resizeMode="contain"
           style={{ height: 30, width: 30, margin: 15, alignSelf: 'center' }} />
         <Text

@@ -9,10 +9,6 @@ const Plans = ({ navigation }: { navigation: any }) => {
     return (
         <ScrollView>
             <View style={{ height: 20 }} />
-            <Button title='PIP'
-                onPress={() => {
-
-                }} />
             <PlanItem
                 navigation={navigation}
                 image={require('../../assets/remove_pointer.png')}

@@ -22,7 +22,7 @@ const Trainings = ({navigation}:{navigation:any}) => {
             <TrainingItem
                 navigation={navigation}
                 image={require('../../assets/remove_pointer.png')}
-                title={'Physio led Back plan'}
+                title={'Physio led Back plan part 2'}
                 subtitle={'Follow a plan designed by a chartered physiotherapist'}
             />
         </ScrollView>
