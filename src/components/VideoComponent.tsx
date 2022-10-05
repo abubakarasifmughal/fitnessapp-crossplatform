@@ -1,21 +1,15 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native'
-import React, { SetStateAction, } from 'react'
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Pressable } from 'react-native'
+import React, { SetStateAction, useState, } from 'react'
 import DraggableView from 'react-native-draggable-reanimated';
 import { VIDEOSTATUS } from '../shared/VIDEOSTATUS';
-import usePIP from '../shared/usePIP';
+
 const { height, width } = Dimensions.get('screen')
 
 const VIDEO_HEIGHT = 120;
 const VIDEO_WIDTH = 200;
 
-
 const VideoComponent = () => {
-    
-    const {
-        PipEnabled,
-        setPipEnabled
-    } = usePIP();
-
+    const [PipEnabled, setPipEnabled] = useState(VIDEOSTATUS.SHOWN)
     return PipEnabled != VIDEOSTATUS.CLOSED ? (
         PipEnabled == VIDEOSTATUS.SHOWN ? (
             <SafeAreaView style={{ position: 'absolute', backgroundColor: 'rgba(200,200,200,0.5)', top: 0, left: 0, right: 0, bottom: 0, }}>
@@ -42,8 +36,10 @@ const VideoComponent = () => {
             <SafeAreaView style={{ position: 'absolute' }}>
                 <DraggableView
                     initValue={{ x: width - VIDEO_WIDTH - 10, y: height - VIDEO_HEIGHT - 50 }}
+                    maxHeight={height}
+                    maxWidth={width}
                 >
-                    <TouchableOpacity onPress={() => {
+                    <Pressable onPress={() => {
                         setPipEnabled(VIDEOSTATUS.SHOWN)
 
                     }}>
@@ -59,7 +55,7 @@ const VideoComponent = () => {
                                 elevation: 10
                             }}
                         />
-                    </TouchableOpacity>
+                    </Pressable>
                 </DraggableView>
             </SafeAreaView>
         )
@@ -71,7 +67,7 @@ export default VideoComponent
 const styles = StyleSheet.create({
     metroButtonBlackExtended: {
         backgroundColor: 'black', paddingTop: 10, paddingBottom: 10, width: "80%",
-        marginTop: 30, borderRadius: 5,alignSelf:'center',position:'absolute',bottom:40
+        marginTop: 30, borderRadius: 5, alignSelf: 'center', position: 'absolute', bottom: 40
     },
     ButtonText: { color: 'white', fontWeight: '600', fontSize: 18, textAlign: 'center' },
 })

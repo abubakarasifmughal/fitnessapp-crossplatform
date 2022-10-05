@@ -16,7 +16,7 @@ const TrainingsStack = () => {
                 headerTintColor:'black',
                 headerTitleAlign:'center'
             }}>
-                <Stack.Screen name={'Trainings'} component={Trainings} options={{
+                <Stack.Screen name={'Your Trainings'} component={Trainings} options={{
                 }}/>
                 <Stack.Screen name={'Trainings Detail'} component={TrainingsDetailPage} options={{
                 }}/>
