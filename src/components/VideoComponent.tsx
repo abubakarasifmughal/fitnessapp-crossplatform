@@ -1,23 +1,34 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Pressable } from 'react-native'
-import React, { SetStateAction, useState, } from 'react'
+import React, { SetStateAction, useEffect, useState, } from 'react'
 import DraggableView from 'react-native-draggable-reanimated';
 import { VIDEOSTATUS } from '../shared/VIDEOSTATUS';
+import { closeVideo, floatVideo, maximizeVideo, store } from '../shared/store';
 
 const { height, width } = Dimensions.get('screen')
 
 const VIDEO_HEIGHT = 120;
 const VIDEO_WIDTH = 200;
 
+
+
 const VideoComponent = () => {
-    const [PipEnabled, setPipEnabled] = useState(VIDEOSTATUS.SHOWN)
+    const [PipEnabled, setPipEnabled] = useState(VIDEOSTATUS.MAXIMIZED)
+
+    store.subscribe(() => {
+        setPipEnabled(store.getState().videoStatusState)
+    })
+
+
+
     return PipEnabled != VIDEOSTATUS.CLOSED ? (
-        PipEnabled == VIDEOSTATUS.SHOWN ? (
+        PipEnabled == VIDEOSTATUS.MAXIMIZED ? (
             <SafeAreaView style={{ position: 'absolute', backgroundColor: 'rgba(200,200,200,0.5)', top: 0, left: 0, right: 0, bottom: 0, }}>
                 <View style={{ height: 350, backgroundColor: 'black' }} />
                 <View style={{ flex: 1, backgroundColor: 'white', flexDirection: 'row-reverse' }}>
                     <TouchableOpacity style={{ margin: 10 }}
                         onPress={() => {
-                            setPipEnabled(VIDEOSTATUS.FLOAT)
+                            // setPipEnabled(VIDEOSTATUS.FLOATING)
+                            store.dispatch(floatVideo())
                         }}>
                         <Image source={require('../../assets/dark_layers.png')}
                             style={{ height: 30, width: 30, }}
@@ -27,7 +38,8 @@ const VideoComponent = () => {
                 </View>
                 <TouchableOpacity
                     onPress={() => {
-                        setPipEnabled(VIDEOSTATUS.CLOSED)
+                        // setPipEnabled(VIDEOSTATUS.CLOSED)
+                        store.dispatch(closeVideo())
                     }} style={[styles.metroButtonBlackExtended, { marginBottom: 15 }]}>
                     <Text style={styles.ButtonText}>Close Video</Text>
                 </TouchableOpacity>
@@ -40,8 +52,8 @@ const VideoComponent = () => {
                     maxWidth={width}
                 >
                     <Pressable onPress={() => {
-                        setPipEnabled(VIDEOSTATUS.SHOWN)
-
+                        // setPipEnabled(VIDEOSTATUS.SHOWN)
+                        store.dispatch(maximizeVideo())
                     }}>
                         <View
                             style={{

@@ -1,5 +1,5 @@
 export const VIDEOSTATUS = {
-    SHOWN: 0,
-    FLOAT: 1,
+    MAXIMIZED: 0,
+    FLOATING: 1,
     CLOSED: 2,
 }

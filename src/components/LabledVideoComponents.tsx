@@ -1,14 +1,16 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { VIDEOSTATUS } from '../shared/VIDEOSTATUS'
+import {store,maximizeVideo,floatVideo} from '../shared/store'
+
 
 const LabledVideoComponents = () => {
-
+    
     return (
         <>
             <TouchableOpacity style={{ width: '95%', alignSelf: 'center', marginTop: 10, marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}
             onPress={() => {
-                console.log("HHAHA");
+                store.dispatch(maximizeVideo())
             }}>
                 <Image source={require('../../assets/pointer.png')}
                     style={{ width: 100, height: 60, backgroundColor: 'gainsboro', marginRight: 15 }} />

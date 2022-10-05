@@ -2,7 +2,6 @@ import { SafeAreaView, StyleSheet, Text, View, Dimensions, ViewComponent } from 
 import React, { useState,createContext } from 'react'
 import { BottomTabs } from './src/router/bottomtabs/BottomTabs';
 import VideoComponent from './src/components/VideoComponent';
-import { VIDEOSTATUS } from './src/shared/VIDEOSTATUS';
 
 
 export default function App() {
