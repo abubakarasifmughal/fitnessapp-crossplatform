@@ -1,11 +1,23 @@
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import LabledVideoComponents from '../components/LabledVideoComponents'
+import { maximizeVideo, setPlayerData, VideoPlayerDataStore, VideoStore } from '../shared/store'
+import planHook from '../shared/planHook'
 const { height, width } = Dimensions.get('screen')
 const PlanDetailPage = ({ navigation, route }: { navigation: any, route: any }) => {
+  const { loadPlanData, Plans } = planHook()
   useEffect(() => {
     navigation.setOptions({ title: route.params.title })
+    loadPlanData()
   }, [navigation, route])
+
+  const onPressHandler = (index: number) => {
+    VideoStore.dispatch(maximizeVideo())
+    VideoPlayerDataStore.dispatch(setPlayerData({
+      playlist: Plans,
+      activeIndex: index
+    }))
+  }
 
   return (
     <ScrollView contentContainerStyle={{ padding: 10 }}>
@@ -32,10 +44,20 @@ const PlanDetailPage = ({ navigation, route }: { navigation: any, route: any }) 
           style={{ flex: 1, alignSelf: 'center', fontSize: 17, fontWeight: '500' }}
         >6 weeks </Text>
       </View>
-      <View style={{ borderBottomColor: 'gainsboro', borderWidth: 1,width:'90%',alignSelf:'center' }} />
-      <LabledVideoComponents />
-      <LabledVideoComponents />
-      <View style={{height:100}} />
+      <View style={{ borderBottomColor: 'gainsboro', borderWidth: 1, width: '90%', alignSelf: 'center' }} />
+
+      {
+        Plans?.map(
+          (data, index) => (
+            <LabledVideoComponents key={index}
+              title={data.title}
+              url={data.url}
+              PressHandler={() => onPressHandler(index)}
+            />
+          )
+        )
+      }
+      <View style={{ height: 100 }} />
     </ScrollView>
   )
 }

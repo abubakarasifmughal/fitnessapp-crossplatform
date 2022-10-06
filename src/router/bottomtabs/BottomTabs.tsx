@@ -1,59 +1,76 @@
-import { Alert, Easing, StyleSheet, Text, View } from 'react-native'
-import React, { SetStateAction, useEffect, useState } from 'react'
+import { Easing, Modal, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import Routes from './Routes';
+import SpashScreen from '../../screens/SpashScreen';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
-
+  const [Loaded, setLoaded] = useState(false)
   // Refs
   const navRef = useNavigationContainerRef()
-  
+
   return (
-    <View style={{ height: '100%' }}>
-      <NavigationContainer
-        ref={navRef}
-        onStateChange={
-          (val) => {
-            
+    <View style={{ height: '100%', }}>
+      {
+        <NavigationContainer
+          ref={navRef}
+          onReady={() => {
+            setTimeout(() => {
+              setLoaded(true)
+            }, 2000)
+          }}
+        >
+          <Modal
+            animationType='fade'
+            visible={!Loaded}>
+            <SpashScreen />
+          </Modal>
+          {Loaded &&
+            <>
+              <Tab.Navigator
+                screenOptions={{
+                  headerTitleAlign: 'center',
+                  tabBarHideOnKeyboard: true,
+                  tabBarAllowFontScaling: true,
+                  tabBarLabelPosition: 'below-icon',
+                  tabBarVisibilityAnimationConfig: {
+                    show: {
+                      animation: 'timing', config: {
+                        easing: Easing.bounce,
+                        duration: 1000,
+                      }
+                    }
+                  },
+                }}>
+                {
+                  Routes.map((route, index) => {
+                    return (
+                      <Tab.Screen key={index} name={route.name}
+                        component={route.component} options={{
+                          tabBarIcon: () => route.icons(navRef.getCurrentRoute()?.name.includes(route.name) ?? true),
+                          tabBarStyle: {
+                            paddingBottom: 5, paddingTop: 5, shadowOffset: { width: 0, height: 0, },
+                            shadowRadius: 2,
+                            shadowOpacity: 0.5,
+                            shadowColor: 'gray',
+                          },
+                          tabBarActiveTintColor: 'red',
+                          headerShown: route.headerShown
+                        }}
+                      />
+                    )
+                  })
+                }
+              </Tab.Navigator>
+            </>
           }
-        }
-      >
-        <Tab.Navigator screenOptions={{
-          headerTitleAlign: 'center',
-          tabBarHideOnKeyboard:true,
-          tabBarAllowFontScaling:true,
-          tabBarLabelPosition:'below-icon',
-          tabBarVisibilityAnimationConfig:{
-            show:{animation:'timing',config:{
-              easing:Easing.bounce,
-              duration:1000,    
-            }}
-          },
-        }}>
-          {
-            Routes.map((route, index) => {
-              return (
-                <Tab.Screen key={index} name={route.name} 
-                component={route.component} options={{
-                  tabBarIcon: () => route.icons(navRef.getCurrentRoute()?.name.includes(route.name) ?? true),
-                  tabBarStyle: { paddingBottom: 5, paddingTop: 5,shadowOffset:{width:0,height:0,},
-                  shadowRadius:2,
-                  shadowOpacity:0.5,
-                  shadowColor:'gray', },
-                  tabBarActiveTintColor: 'red',
-                  headerShown: route.headerShown
-                }}
-                />
-              )
-            })
-          }
-        </Tab.Navigator>
-      </NavigationContainer>
+        </NavigationContainer>
+      }
     </View>
   )
 }

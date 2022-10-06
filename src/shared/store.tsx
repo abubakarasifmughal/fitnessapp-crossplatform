@@ -1,10 +1,12 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { VIDEOSTATUS } from "./VIDEOSTATUS";
 
+
+// Video Player Floating
 const VideoStatusSlice = createSlice({
     name: 'videoStatus',
     initialState: {
-        videoStatusState: VIDEOSTATUS.MAXIMIZED
+        videoStatusState: VIDEOSTATUS.CLOSED
     },
     reducers: {
         maximizeVideo: state => {
@@ -18,15 +20,28 @@ const VideoStatusSlice = createSlice({
         }
     }
 });
-
-
-export const {maximizeVideo, floatVideo, closeVideo} = VideoStatusSlice.actions
-
-export const store = configureStore({
-    reducer: VideoStatusSlice.reducer
+export const { maximizeVideo, floatVideo, closeVideo } = VideoStatusSlice.actions
+export const VideoStore = configureStore({
+    reducer: VideoStatusSlice.reducer,
 })
 
-store.subscribe(() => {
-    console.log("NEW STATE IS");
-    console.log(store.getState());  
+// Video Player Data
+const VideoPlayerDataSlice = createSlice({
+    name: 'videoPlayerData',
+    initialState: {
+        playerData: {
+            playlist:[], //{playlist:{title:urk}}[]
+            activeIndex:0
+        }
+    },
+    reducers: {
+        setPlayerData: (state, action) => {
+            state.playerData = action.payload
+        }
+    }
+});
+
+export const { setPlayerData } = VideoPlayerDataSlice.actions
+export const VideoPlayerDataStore = configureStore({
+    reducer: VideoPlayerDataSlice.reducer
 })

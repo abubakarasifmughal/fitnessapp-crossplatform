@@ -1,14 +1,16 @@
-import { Alert, Button, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import RadioButton from '../components/RadioButton';
 import useBLE from '../shared/useBle';
 import { Device } from 'react-native-ble-plx';
+import { ApplicationMode } from '../shared/ApplicationMode';
 
 
 
-const Settings = ({ navigation, }: { navigation: any }) => {
+
+const Settings = ({ navigation }: { navigation: any }) => {
   // const manager = new BleManager();
-  const [Mode, setMode] = useState("")
+  const [Mode, setMode] = useState(ApplicationMode.GymMode)
 
   const {
     requstPermissions,
@@ -52,17 +54,17 @@ const Settings = ({ navigation, }: { navigation: any }) => {
       }}>
         <RadioButton
           onPressHandle={() => {
-            setMode('Gym Mode')
+            setMode(ApplicationMode.GymMode)
           }}
           label='Gym Mode'
-          active={Mode === "Gym Mode"}
+          active={Mode === ApplicationMode.GymMode}
         />
         <RadioButton
           onPressHandle={() => {
-            setMode('Office Mode')
+            setMode(ApplicationMode.OfficeMode)
           }}
           label='Office Mode'
-          active={Mode === "Office Mode"}
+          active={Mode === ApplicationMode.OfficeMode}
         />
       </View>
 
