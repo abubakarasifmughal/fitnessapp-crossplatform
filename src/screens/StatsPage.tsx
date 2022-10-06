@@ -11,7 +11,7 @@ const StatsPage = ({ navigation }: any) => {
     const [PointerLocation, setPointerLocation] = useState(0)
 
     const onPressMotionGraph = () => {
-        navigation.navigate('Motion Graph')
+        navigation.navigate('Motion Graph Statistics')
     }
 
     return (

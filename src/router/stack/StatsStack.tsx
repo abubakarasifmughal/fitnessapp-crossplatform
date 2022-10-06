@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, {} from 'react'
+import React, { } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import StatsPage from '../../screens/StatsPage'
 import MotionGraph from '../../screens/MotionGraph'
@@ -17,13 +17,13 @@ const StatsStack = () => {
                 headerTitleAlign: 'center'
             }}>
                 <Stack.Screen name={'Your Statistics'} component={StatsPage} options={{
-                    title:"Stats"
+                    title: "Stats"
                 }} />
-                <Stack.Screen name={'Motion Graph'}
-                component={MotionGraph} 
-                options={{
-                    title:"Motion Graph"
-                }}/>
+                <Stack.Screen name={'Motion Graph Statistics'}
+                    component={MotionGraph}
+                    options={{
+                        title: "Track your workout"
+                    }} />
             </Stack.Navigator>
         </View>
     )
