@@ -1,185 +1,131 @@
 import { ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import RadioButton from '../components/RadioButton';
-import useBLE from '../shared/useBle';
-import { Device } from 'react-native-ble-plx';
 import { ApplicationMode } from '../shared/ApplicationMode';
+import { BleManager, ScanMode } from 'react-native-ble-plx';
 
-
+const bleManager = new BleManager()
 
 
 const Settings = ({ navigation }: { navigation: any }) => {
   // const manager = new BleManager();
   const [Mode, setMode] = useState(ApplicationMode.GymMode)
+  const [scanAllDevices, setScanAllDevices] = useState(false)
 
-  const {
-    requstPermissions,
-    scanForDevices,
-    disconnectDevice,
-    ScannedDevices,
-    connectToDevice,
-    connectedDevice,
-    scanAllDevices,
-    setScanAllDevices,
-  } = useBLE()
+  const onPressDisconnet = () => {
+    console.log("Disconnected Pressed");
 
-  const openModalForPermissions = async () => {
-    requstPermissions((result: boolean) => {
-      // Alert.alert("Bluetooth Permission was granted  " + result) 
-      if (result) {
-        scanForDevices()
+  }
+  const startScanning = () => {
+    console.log("Start Scanning Pressed");
+    bleManager.startDeviceScan([], { allowDuplicates: false, scanMode: ScanMode.Balanced }, (err, scanned) => {
+      if (err) {
+        console.log("ERROR Scanning");
+      } else if (scanned?.localName != null) {
+        // console.log(scanned?.id);
+        // console.log(scanned?.name);
+        // console.log(scanned?.localName);
+        // bleManager.stopDeviceScan()
       }
     })
+
+
+
+    bleManager.connectToDevice('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B', {
+
+    })
+      .then((device) => {
+        console.log("device.id:", device.id);
+        console.log("device.name:", device.name);
+        console.log("device.serviceData:", device.serviceData);
+        console.log("device.rssi:", device.rssi);
+        
+      })
+      .catch(err => {
+        console.log("Error connecting");
+        console.log(err);
+
+      })
+
+
   }
 
   return (
-    <View style={{ paddingTop: 10, alignItems: 'center', height: "100%" }}>
+    <ScrollView>
+      <View style={{ paddingTop: 10, alignItems: 'center', height: "100%" }}>
 
-      <View style={{ flexDirection: 'row', width: '90%' }}>
-        <Text style={styles.h1Flexed}>Select Mode</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: '500' }}>{scanAllDevices ? "Scan all devices" : "BackAware only"}</Text>
-          <Switch
-            style={{transform:[{scale:0.75}]}}
-            onChange={() => setScanAllDevices(!scanAllDevices)}
-            value={scanAllDevices}
-            ios_backgroundColor={'rgb(250,20,20)'}
+        <View style={{ flexDirection: 'row', width: '90%' }}>
+          <Text style={styles.h1Flexed}>Select Mode</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: '500' }}>{scanAllDevices ? "Scan all devices" : "BackAware only"}</Text>
+            <Switch
+              style={{ transform: [{ scale: 0.75 }] }}
+              onChange={() => {
+                setScanAllDevices(!scanAllDevices)
+              }}
+              value={scanAllDevices}
+              ios_backgroundColor={'rgb(250,20,20)'}
+            />
+          </View>
+        </View>
+
+        <View style={{
+          flexDirection: 'row', justifyContent: 'space-between',
+          width: "90%", paddingTop: 15,
+        }}>
+          <RadioButton
+            onPressHandle={() => {
+              setMode(ApplicationMode.GymMode)
+            }}
+            label='Gym Mode'
+            active={Mode === ApplicationMode.GymMode}
+          />
+          <RadioButton
+            onPressHandle={() => {
+              setMode(ApplicationMode.OfficeMode)
+            }}
+            label='Office Mode'
+            active={Mode === ApplicationMode.OfficeMode}
           />
         </View>
-      </View>
 
-      <View style={{
-        flexDirection: 'row', justifyContent: 'space-between',
-        width: "90%", paddingTop: 15,
-      }}>
-        <RadioButton
-          onPressHandle={() => {
-            setMode(ApplicationMode.GymMode)
-          }}
-          label='Gym Mode'
-          active={Mode === ApplicationMode.GymMode}
-        />
-        <RadioButton
-          onPressHandle={() => {
-            setMode(ApplicationMode.OfficeMode)
-          }}
-          label='Office Mode'
-          active={Mode === ApplicationMode.OfficeMode}
-        />
-      </View>
+        <View style={[styles.inputWithLabel, { justifyContent: 'center' }]}>
+          <TextInput style={styles.inputField}
+            placeholder={'If in poor in poor position notify me in '} />
+        </View>
 
-      <View style={[styles.inputWithLabel, { justifyContent: 'center' }]}>
-        <TextInput style={styles.inputField}
-          placeholder={'If in poor in poor position notify me in '} />
-      </View>
+        <Text style={styles.h1}>Bluetooth Connection</Text>
+        <View style={{
+          flexDirection: 'row', width: '90%', paddingBottom: 10,
+        }}>
+          <TouchableOpacity
+            style={styles.metroButtonBlackExtendedSm}
+            onPress={() => startScanning()}>
+            <Text style={styles.ButtonText}>
+              Start Scan
+            </Text>
+          </TouchableOpacity>
+          <View style={{ width: 15 }} />
 
-      <Text style={styles.h1}>Bluetooth Connection</Text>
-      <View style={{
-        flexDirection: 'row', width: '90%', paddingBottom: 10,
-      }}>
+          <TouchableOpacity
+            style={styles.metroButtonBlackExtendedSm}
+            onPress={() => onPressDisconnet()}>
+            <Text style={styles.ButtonText}>
+              Disconnect
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+
+
         <TouchableOpacity
-          style={styles.metroButtonBlackExtendedSm}
           onPress={() => {
-            openModalForPermissions()
-          }}>
-          <Text style={styles.ButtonText}>
-            Start Scan
-          </Text>
-        </TouchableOpacity>
-        <View style={{ width: 15 }} />
-
-        <TouchableOpacity
-          style={styles.metroButtonBlackExtendedSm}
-          onPress={() => disconnectDevice(connectedDevice)}>
-          <Text style={styles.ButtonText}>
-            Disconnect
-          </Text>
+            navigation.navigate("Calibration Settings")
+          }} style={[styles.metroButtonBlackExtended, { marginBottom: 15 }]}>
+          <Text style={styles.ButtonText}>Calibration Settings</Text>
         </TouchableOpacity>
       </View>
-
-
-
-      <View style={{ flex: 1, width: '90%', alignSelf: 'center' }}>
-        <ScrollView contentContainerStyle={{
-          alignItems: 'flex-start',
-          width: "100%",
-          paddingTop: 10,
-        }}
-          style={{ width: '100%', }}>
-          {
-            ScannedDevices.filter(device =>
-              scanAllDevices ?
-                true :
-                device.name?.toLowerCase()
-                  .includes("BackAware".toLowerCase()) === true ? true : false
-            ).map((data: Device, index) => {
-              return (
-                <TouchableOpacity key={index}
-                  style={{ width: '100%', marginBottom: 10 }}
-                  onLongPress={() => {
-
-                  }}
-                  onPress={() => {
-                    connectToDevice(data)
-                  }}>
-                  <View style={{
-                    padding: 5, borderBottomColor: 'gray', borderBottomWidth: 1, flexDirection: 'row',
-                    justifyContent: 'space-between', alignItems: 'center'
-                  }}>
-                    <View style={{}}>
-
-                      <Text style={{ marginBottom: 5, fontSize: 18, fontWeight: '600' }}>{data.name}</Text>
-                      <Text style={{ padding: 0, }}>{data.id}</Text>
-                    </View>
-                    {
-                      data.name === connectedDevice?.name &&
-                      <Text style={{ fontSize: 20 }}>✔️</Text>
-                    }
-                  </View>
-                </TouchableOpacity>
-              )
-            })
-          }
-        </ScrollView>
-      </View>
-
-
-
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("Calibration Settings")
-        }} style={[styles.metroButtonBlackExtended, { marginBottom: 15 }]}>
-        <Text style={styles.ButtonText}>Calibration Settings</Text>
-      </TouchableOpacity>
-
-
-
-
-      {/* <Button
-        title='Show'
-        onPress={() => {
-          manager.discoverAllServicesAndCharacteristicsForDevice('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-            .then(val => {
-              console.log(val);
-            }).catch(err => {
-              console.log(err);
-
-            })
-
-          manager.isDeviceConnected('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-            .then(val => {
-              console.log(val);
-
-            })
-            .catch(err => {
-              console.log("err");
-
-              console.log(err);
-            })
-
-
-        }} /> */}
-    </View>
+    </ScrollView>
   )
 }
 

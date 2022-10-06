@@ -3,42 +3,61 @@ import React, { useState } from 'react'
 import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
 import Pie_Chart from '../components/Pie_Chart'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const StatsPage = ({ navigation }: any) => {
     const [LowerBoundary, setLowerBoundary] = useState(-100)
     const [UpperBoundary, setUpperBoundary] = useState(100)
     const [PointerLocation, setPointerLocation] = useState(0)
 
+    const onPressMotionGraph = () => {
+        navigation.navigate('Motion Graph')
+    }
 
     return (
-        <ScrollView>
-            <TouchableOpacity onPress={() => {
-                 setPointerLocation(90)
-            }} style={{ height: 40 }} />
-            <TestNameInputField />
-            <PointerSlider
-                LowerBoundary={LowerBoundary}
-                UpperBoundary={UpperBoundary}
-                PointerLocation={PointerLocation}
-                setLowerBoundary={setLowerBoundary}
-                setUpperBoundary={setUpperBoundary}
-                setPointerLocation={setPointerLocation}
-            />
-            <CalibrationButtons
-                LowerBoundary={LowerBoundary}
-                UpperBoundary={UpperBoundary}
-                PointerLocation={PointerLocation}
-                setLowerBoundary={setLowerBoundary}
-                setUpperBoundary={setUpperBoundary}
-                setPointerLocation={setPointerLocation}
-            />
-            <StopButton
-                setPointerLocation={setPointerLocation}
-                PointerLocation={PointerLocation}
-            />
-            <Pie_Chart />
-            <View style={{ height: 120 }} />
-        </ScrollView>
+        <SafeAreaView style={{ height: "100%", }}>
+            <ScrollView style={{ flex: 1 }}>
+                <TouchableOpacity onPress={() => {
+                    setPointerLocation(90)
+                }} style={{ height: 40 }} />
+                <TestNameInputField />
+                <PointerSlider
+                    LowerBoundary={LowerBoundary}
+                    UpperBoundary={UpperBoundary}
+                    PointerLocation={PointerLocation}
+                    setLowerBoundary={setLowerBoundary}
+                    setUpperBoundary={setUpperBoundary}
+                    setPointerLocation={setPointerLocation}
+                />
+                <CalibrationButtons
+                    LowerBoundary={LowerBoundary}
+                    UpperBoundary={UpperBoundary}
+                    PointerLocation={PointerLocation}
+                    setLowerBoundary={setLowerBoundary}
+                    setUpperBoundary={setUpperBoundary}
+                    setPointerLocation={setPointerLocation}
+                />
+                <StopButton
+                    setPointerLocation={setPointerLocation}
+                    PointerLocation={PointerLocation}
+                />
+                <Pie_Chart />
+                <View style={{ height: 120 }} />
+
+            </ScrollView>
+            <View style={{
+                shadowColor: 'gray', shadowOffset: { width: 0, height: 0 }, shadowRadius: 5, shadowOpacity: 1
+            }}>
+                <TouchableOpacity style={{
+                    marginLeft: 15, marginRight: 15, marginBottom: 15,
+                    alignItems: 'center', backgroundColor: 'white', borderColor: 'black',
+                    borderWidth: 2, borderRadius: 10
+                }} onPress={() => onPressMotionGraph()} >
+                    <Text style={{ color: 'black', padding: 10, fontSize: 18 }}>Motion Graph</Text>
+                </TouchableOpacity>
+        </View>
+        </SafeAreaView >
+
     )
 }
 
