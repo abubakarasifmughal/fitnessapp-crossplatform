@@ -2,37 +2,20 @@ import { useState } from "react";
 import { Alert, PermissionsAndroid, Platform } from "react-native"
 import { BleManager, Device } from "react-native-ble-plx"
 import { atob } from "react-native-quick-base64";
-
-/**
- * -------------------------------------------------------
- * | Characteristics extracted from the java source code |
- * -------------------------------------------------------
- * private static final String CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb"  ;
- * private final static String CHARACTERISTIC_READABLE = "4ac8a682-9736-4e5d-932b-e9b31405049c";
- * private final static String CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
- */
-
-const DEVICE_ID = "FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B";
-const CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
-const CHARACTERISTIC_READABLE = "4ac8a682-9736-4e5d-932b-e9b31405049c";
-const CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
-
-
-// Readible : 4ac8a682-9736-4e5d-932b-e9b31405049c
-// CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
-
+import { ConnectedDeviceStore, setConnectedDeviceAtStore } from '../shared/store';
 
 type PermissionCallback = (result: boolean) => void
 
 interface BluetoothLowEnergyApi {
     requstPermissions(callback: PermissionCallback): Promise<void>;
     scanForDevices(): void;
-    disconnectDevice(device: Device | null): void;
+    disconnectDevice(device: Device): void;
     connectToDevice(device: Device): Promise<void>;
     ScannedDevices: Device[];
-    connectedDevice: Device | null;
+    // connectedDevice: Device | null;
     scanAllDevices: boolean;
     setScanAllDevices: React.Dispatch<React.SetStateAction<boolean>>;
+    isScanningStatus: boolean;
 }
 
 const bleManager = new BleManager();
@@ -40,8 +23,9 @@ const bleManager = new BleManager();
 export default function useBLE(): BluetoothLowEnergyApi {
 
     const [ScannedDevices, setScannedDevices] = useState<Device[]>([]);
-    const [connectedDevice, setConnectedDevice] = useState<Device | null>(null)
+    // const [connectedDevice, setConnectedDevice] = useState<Device | null>(null)
     const [scanAllDevices, setScanAllDevices] = useState(false)
+    const [isScanningStatus, setIsScanningStatus] = useState(false)
     // todo will attach to the datastream later
     const [flexValue, setFlexValue] = useState(0.0)
 
@@ -64,101 +48,57 @@ export default function useBLE(): BluetoothLowEnergyApi {
     const isDuplicateDevice = (devices: Device[], newDevice: Device) =>
         devices.findIndex(deviceFromArray => deviceFromArray.id === newDevice.id) > -1
 
-    const scanForDevices = () => {
-
-        bleManager.startDeviceScan(null, { allowDuplicates: false }, (error, scannedDevice) => {
-            if (error) {
-                console.log(error);
-            } else {
-                if (scannedDevice
-                    && scannedDevice.name !== null
-                    // todo uncheck this one in case you strictly want the "BackAware devices" only
-                    && (scannedDevice.name?.toUpperCase().includes("BackAware".toUpperCase()) || scanAllDevices)
-                ) {
-                    if (!isDuplicateDevice(ScannedDevices, scannedDevice)) {
-                        setScannedDevices([...ScannedDevices, scannedDevice])
-                    }
+    const filterDevices = (devices: Device[]) => {
+        let filtered: Device[] = []
+        for (let index = 0; index < devices.length; index++) {
+            for (let s_index = index + 1; s_index < devices.length; s_index++) {
+                if (devices[index].id !== devices[s_index].id) {
+                    if (filtered.filter(item => item.id === devices[index].id).length === 0)
+                        filtered.push(devices[index])
                 }
             }
-        })
+        }
+        return filtered
+    }
+
+    const scanForDevices = () => {
+        if (isScanningStatus) {
+            setIsScanningStatus(false)
+            bleManager.stopDeviceScan()
+        } else {
+            bleManager.startDeviceScan([], { allowDuplicates: false }, (error, scanResponse) => {
+                if (error) {
+                    Alert.alert("Counldn't scan devices")
+                } else {
+                    setIsScanningStatus(true)
+                    if (scanResponse !== null) {
+                        if (scanResponse.name !== null) {
+                            ScannedDevices.push(scanResponse)
+                            setScannedDevices([...filterDevices(ScannedDevices)])
+                        }
+                    }
+                }
+            })
+        }
     }
 
     const connectToDevice = async (device: Device) => {
-        try {
-            const deviceConnection = await bleManager.connectToDevice(device.id)
-            setConnectedDevice(deviceConnection)
-            console.log("Connected with", connectedDevice?.name);
-            bleManager.stopDeviceScan();
-            await connectedDevice?.discoverAllServicesAndCharacteristics();
-            await startStreamingData(device)
-        } catch (e) {
-            console.log("Error while connecting to the device", e)
-        }
-    }
-
-    const startStreamingData = async (device: Device) => {
-        console.log("Executed");
-        console.log(device.name);
-
-        if (device) {
-            console.log("Im in");
-
-            device.discoverAllServicesAndCharacteristics('')
-            .then(value => {
-                console.log("Device Characteristics are");
-                console.log(value.id);
-                console.log(value.name);
-                console.log(value.serviceUUIDs);
-                console.log(value.solicitedServiceUUIDs);
-                console.log(value.serviceData);
-                console.log(value.serviceData);
-                console.log("Device Characteristics END----");
+        device.connect()
+            .then((connectedDevice) => {
+                ConnectedDeviceStore.dispatch(setConnectedDeviceAtStore(device))
+                console.log("Connect to ", connectedDevice.name);
             })
-
-            device.monitorCharacteristicForService(
-                // CHARACTERISTIC_CONFIG,
-                DEVICE_ID,
-                CHARACTERISTIC_READABLE,
-                (err, char) => {
-                    if (err) {
-                        console.log("XXXXxxxXXXXXxxxxx");
-                        console.log("ERROR from DEVICE");
-                        console.log(err);
-                        console.log("XXXXxxxXXXXXxxxxx");
-
-                    } else if (!char?.value) {
-                        Alert.alert("No Characteristics were found on " + char?.deviceID)
-                        return
-                    }
-
-                    const rawData = atob(char?.value)
-
-                    const dataFromDevice = Number(rawData)
-                    console.log("----------------");
-                    // console.log(dataFromDevice);
-                    console.log("----------------");
-                    
-
-                    console.log(char?.id);
-                    console.log(char?.deviceID);
-                    console.log(char?.descriptors);
-                    console.log(char?.isReadable);
-                    console.log(char?.isIndicatable);
-                    console.log(char?.uuid);
-                    console.log(char?.serviceUUID);
-                }
-            )
-        } else {
-            console.log("No device connected")
-        }
+            .catch(err => {
+                console.log(err);
+                Alert.alert(`Counldn't connect to device ${device.name}`)
+            })
     }
 
-    const disconnectDevice = async (device: Device) => {
+    const disconnectDevice = (device: Device) => {
         // todo disconnect
         // let DisconnectedDevice = await bleManager.cancelDeviceConnection(device.id)
         // console.log(DisconnectedDevice.name);
         setScannedDevices([])
-        setConnectedDevice(null)
     }
 
     return {
@@ -166,9 +106,9 @@ export default function useBLE(): BluetoothLowEnergyApi {
         scanForDevices,
         ScannedDevices,
         connectToDevice,
-        connectedDevice,
         scanAllDevices,
         setScanAllDevices,
         disconnectDevice,
+        isScanningStatus,
     };
 }

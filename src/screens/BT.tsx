@@ -1,6 +1,8 @@
 import { Alert, Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { BleManager, Device } from 'react-native-ble-plx'
+import { atob } from 'react-native-quick-base64';
+
 
 const bleManager = new BleManager({});
 
@@ -40,29 +42,39 @@ const BT = () => {
     }
 
     const onConnectWith = (device: Device) => {
-        console.log(`
-        ****************************************************************
-        ID   :                  ${device.id}
-        Name :                  ${device.name}
-        LocalName :             ${device.localName}
-        serviceUUIDs :          ${device.serviceUUIDs}
-        serviceData :           ${JSON.stringify(device.serviceData)}
-        solicitedServiceUUIDs : ${device.solicitedServiceUUIDs}
-        ****************************************************************
-        ----------------------------------------------------------------`);
+        bleManager.connectToDevice(device.id.toLowerCase())
+            .then(res => {
+                res.discoverAllServicesAndCharacteristics()
+                    .then(res => {
+                        res.connect({ autoConnect: false })
+                            .then(res => {
+                                res.services().then(data => {
+                                    // console.log("services");
+                                    // console.log(data[0]);
+                                    data[0].characteristics().then(char => {
+                                        // console.log("Characteristics");
+                                        // console.log(char.filter(c => c.isReadable === true)[0]);  
 
-        console.log
-        bleManager.connectToDevice(device.id)
-            .then((device) => {
-                console.log(device.name);
+                                        char.filter(c => c.isReadable === true)[0].read()
+                                            .then(value => {
+                                                console.log("Read value is");
+                                                console.log(atob(value.value ?? ""));
+                                                
+                                            })
 
-                bleManager.discoverAllServicesAndCharacteristicsForDevice(device.id)
-                .then((value) => {
-                    console.log(value.id);
-                })
-                .catch((Err) => {
-                    console.log(Err);
-                })
+                                    })
+                                    // console.log("Connected");
+                                })
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+
+            })
+            .catch(err => {
+                console.log(err);
+                console.log("Err");
 
             })
     }

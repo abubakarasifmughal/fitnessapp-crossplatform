@@ -1,9 +1,10 @@
 import { ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import RadioButton from '../components/RadioButton';
-import useBLE from '../shared/useBle';
 import { Device } from 'react-native-ble-plx';
 import { ApplicationMode } from '../shared/ApplicationMode';
+import useBLE from '../shared/useBle';
+import { ConnectedDeviceStore } from '../shared/store';
 
 
 
@@ -18,9 +19,9 @@ const Settings = ({ navigation }: { navigation: any }) => {
     disconnectDevice,
     ScannedDevices,
     connectToDevice,
-    connectedDevice,
     scanAllDevices,
     setScanAllDevices,
+    isScanningStatus
   } = useBLE()
 
   const openModalForPermissions = async () => {
@@ -40,7 +41,7 @@ const Settings = ({ navigation }: { navigation: any }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: '500' }}>{scanAllDevices ? "Scan all devices" : "BackAware only"}</Text>
           <Switch
-            style={{transform:[{scale:0.75}]}}
+            style={{ transform: [{ scale: 0.75 }] }}
             onChange={() => setScanAllDevices(!scanAllDevices)}
             value={scanAllDevices}
             ios_backgroundColor={'rgb(250,20,20)'}
@@ -83,14 +84,14 @@ const Settings = ({ navigation }: { navigation: any }) => {
             openModalForPermissions()
           }}>
           <Text style={styles.ButtonText}>
-            Start Scan
+            {isScanningStatus ? "Stop Scan" : "Start Scan"}
           </Text>
         </TouchableOpacity>
         <View style={{ width: 15 }} />
 
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
-          onPress={() => disconnectDevice(connectedDevice)}>
+          onPress={() => disconnectDevice(ConnectedDeviceStore.getState().device as any)}>
           <Text style={styles.ButtonText}>
             Disconnect
           </Text>
@@ -132,7 +133,7 @@ const Settings = ({ navigation }: { navigation: any }) => {
                       <Text style={{ padding: 0, }}>{data.id}</Text>
                     </View>
                     {
-                      data.name === connectedDevice?.name &&
+                      data.name === (ConnectedDeviceStore.getState().device ?? { name: "" }).name &&
                       <Text style={{ fontSize: 20 }}>✔️</Text>
                     }
                   </View>
@@ -152,33 +153,6 @@ const Settings = ({ navigation }: { navigation: any }) => {
         <Text style={styles.ButtonText}>Calibration Settings</Text>
       </TouchableOpacity>
 
-
-
-
-      {/* <Button
-        title='Show'
-        onPress={() => {
-          manager.discoverAllServicesAndCharacteristicsForDevice('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-            .then(val => {
-              console.log(val);
-            }).catch(err => {
-              console.log(err);
-
-            })
-
-          manager.isDeviceConnected('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-            .then(val => {
-              console.log(val);
-
-            })
-            .catch(err => {
-              console.log("err");
-
-              console.log(err);
-            })
-
-
-        }} /> */}
     </View>
   )
 }

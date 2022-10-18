@@ -9,9 +9,9 @@ export default function App() {
 
   return (
     <SafeAreaView style={{ overflow: 'scroll' }}>
-      {/* <BottomTabs />
-      <VideoComponent /> */}
-    <BT />
+      <BottomTabs />
+      <VideoComponent />
+      {/* <BT /> */}
     </SafeAreaView>
   )
 }

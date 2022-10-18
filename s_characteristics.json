@@ -1,0 +1,56 @@
+[
+    {
+        "_manager": {
+            "_activePromises": [Object
+            ],
+            "_activeSubscriptions": [Object
+            ],
+            "_errorCodesToMessagesMapping": [Object
+            ],
+            "_eventEmitter": [NativeEventEmitter
+            ],
+            "_scanEventSubscription": [Object
+            ],
+            "_uniqueId": 12
+        },
+        "deviceID": "C02047FB-6FCA-8790-5CB7-B44E9588BC40",
+        "id": 10767336480,
+        "isIndicatable": false,
+        "isNotifiable": false,
+        "isNotifying": false,
+        "isReadable": true,
+        "isWritableWithResponse": false,
+        "isWritableWithoutResponse": false,
+        "serviceID": 10785178880,
+        "serviceUUID": "ab0828b1-198e-4351-b779-901fa0e0371e",
+        "uuid": "0972ef8c-7613-4075-ad52-756f33d4da91",
+        "value": null
+    },
+    {
+        "_manager": {
+            "_activePromises": [Object
+            ],
+            "_activeSubscriptions": [Object
+            ],
+            "_errorCodesToMessagesMapping": [Object
+            ],
+            "_eventEmitter": [NativeEventEmitter
+            ],
+            "_scanEventSubscription": [Object
+            ],
+            "_uniqueId": 12
+        },
+        "deviceID": "C02047FB-6FCA-8790-5CB7-B44E9588BC40",
+        "id": 10767340992,
+        "isIndicatable": false,
+        "isNotifiable": false,
+        "isNotifying": false,
+        "isReadable": false,
+        "isWritableWithResponse": true,
+        "isWritableWithoutResponse": false,
+        "serviceID": 10785178880,
+        "serviceUUID": "ab0828b1-198e-4351-b779-901fa0e0371e",
+        "uuid": "4ac8a682-9736-4e5d-932b-e9b31405049c",
+        "value": null
+    }
+]

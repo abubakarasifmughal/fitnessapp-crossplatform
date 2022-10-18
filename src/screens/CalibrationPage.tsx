@@ -1,40 +1,54 @@
 import { Alert, Button, Dimensions, NativeAppEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
+import { BleManager, Device, Service } from 'react-native-ble-plx';
+import useBLE from '../shared/useBle';
+import { ConnectedDeviceStore } from '../shared/store'
+
+const bleManager = new BleManager()
+
 const CalibrationPage = ({ navigation }: { navigation: any }) => {
+  const [ConnectedDevice, setConnectedDevice] = useState<Device | undefined>(undefined)
+  const [Services, setServices] = useState<Service[] | undefined>()
+  const [Loaded, setLoaded] = useState(false)
+  const GetServicesLoaded = () => {
+    setConnectedDevice(ConnectedDeviceStore.getState().device)
+    ConnectedDevice?.connect()
+      .then((device) => {
+        device.discoverAllServicesAndCharacteristics()
+          .then((device) => {
+            device.services()
+              .then((services) => {
+                setServices(services)
+                setLoaded(true)
+                console.log("loaded");
+
+              })
+              .catch(() => {
+                Alert.alert("Cannot Read Device")
+              })
+          })
+          .catch(err => {
+            Alert.alert("Cannot Connect")
+          })
+      })
+
+
+  }
+
+  useEffect(() => {
+    GetServicesLoaded()
+
+  }, [])
+
+
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
-      {/* <Button
-        title='Show'
-        onPress={() => {
-          // manager.readDescriptorForDevice('00002902-0000-1000-8000-00805f9b34fb')
-          manager.discoverAllServicesAndCharacteristicsForDevice('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-            .then((val: Device) => {
-              console.log(val.serviceData);
-
-
-
-              // manager.isDeviceConnected('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-              //   .then(val => {
-              //     console.log(val);
-              //     manager.cancelDeviceConnection('FDBA00A5-2EFC-3C0A-D425-CCD83ADE5A4B')
-              //     .then((val) => {
-              //       console.log("diconnected ", val.name);
-              //     })
-              //   })
-              //   .catch(err => {
-              //     console.log("err");
-              //     console.log(err);
-              //   })
-            }).catch(err => {
-              console.log(err);
-            })
-
-        }} /> */}
-
       <Text style={styles.h1}>SENSOR VALUE</Text>
       <Text style={styles.liveDataStyle}>{0}</Text>
-      <TouchableOpacity style={styles.liveDataButtonBlack}>
+      <TouchableOpacity style={styles.liveDataButtonBlack} onPress={() => {
+        GetServicesLoaded()
+      }}>
         <Text style={styles.ButtonText}>SHOW LIVE DATA</Text>
       </TouchableOpacity>
       <Text style={styles.h1}>CALIBRATION SETTINGS</Text>
