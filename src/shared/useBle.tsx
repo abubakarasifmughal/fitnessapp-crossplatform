@@ -85,7 +85,11 @@ export default function useBLE(): BluetoothLowEnergyApi {
     const connectToDevice = async (device: Device) => {
         device.connect()
             .then((connectedDevice) => {
-                ConnectedDeviceStore.dispatch(setConnectedDeviceAtStore(device))
+                ConnectedDeviceStore.dispatch(setConnectedDeviceAtStore({
+                    id:device.id,
+                    localName:device.localName,
+                    name:device.name,
+                }))
                 console.log("Connect to ", connectedDevice.name);
             })
             .catch(err => {

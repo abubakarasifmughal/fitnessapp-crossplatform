@@ -1,53 +1,90 @@
-import { Alert, Button, Dimensions, NativeAppEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Alert, Animated, Button, Dimensions, Easing, NativeAppEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
-import { BleManager, Device, Service } from 'react-native-ble-plx';
+import { BleManager, Characteristic, Device, Service } from 'react-native-ble-plx';
 import useBLE from '../shared/useBle';
 import { ConnectedDeviceStore } from '../shared/store'
+import { atob } from 'react-native-quick-base64';
 
 const bleManager = new BleManager()
 
 const CalibrationPage = ({ navigation }: { navigation: any }) => {
   const [ConnectedDevice, setConnectedDevice] = useState<Device | undefined>(undefined)
-  const [Services, setServices] = useState<Service[] | undefined>()
-  const [Loaded, setLoaded] = useState(false)
-  const GetServicesLoaded = () => {
-    setConnectedDevice(ConnectedDeviceStore.getState().device)
-    ConnectedDevice?.connect()
-      .then((device) => {
-        device.discoverAllServicesAndCharacteristics()
-          .then((device) => {
-            device.services()
-              .then((services) => {
-                setServices(services)
-                setLoaded(true)
-                console.log("loaded");
+  const [DeviceChar, setDeviceChar] = useState<Characteristic[]>([])
 
+  const [LiveData, setLiveData] = useState("Press to Start")
+
+  const [Loaded, setLoaded] = useState(false)
+  const GetServicesLoaded_Readable = () => {
+    setConnectedDevice(ConnectedDeviceStore.getState().device)
+    bleManager.connectToDevice(ConnectedDevice?.id ?? "")
+      .then(res => {
+        res.discoverAllServicesAndCharacteristics()
+          .then(res => {
+            res.connect({ autoConnect: false })
+              .then(res => {
+                res.services()
+                  .then(data => {
+                    data[0].characteristics()
+                      .then(char => {
+                        setDeviceChar((char ?? []))
+                        setLoaded(true)
+                      })
+                      .catch(err => {
+                        console.log(err);
+                        setLiveData("Press to Start")
+                      })
+                  })
+                  .catch(err => {
+                    console.log(err);
+                    setLiveData("Press to Start")
+                  })
               })
-              .catch(() => {
-                Alert.alert("Cannot Read Device")
+              .catch(err => {
+                console.log(err);
+                setLiveData("Press to Start")
               })
           })
           .catch(err => {
-            Alert.alert("Cannot Connect")
+            console.log(err);
+            setLiveData("Press to Start")
           })
+      })
+      .catch(err => {
+        console.log(err)
+        setLiveData("Press to Start")
       })
 
 
   }
 
-  useEffect(() => {
-    GetServicesLoaded()
 
-  }, [])
+  useEffect(
+    () => {
+      if (DeviceChar.length == 0) {
+        GetServicesLoaded_Readable()
+      } else {
+        let interval: number = setInterval(() => {
+          DeviceChar.filter(it => it.isReadable)[0].read()
+            .then(val => {
+              setLiveData(Number.parseInt(atob(val.value ?? "0")).toString())
+            })
+            .catch(err => {
+              setLiveData("Press to Start")
+            })
+        }, 1000);
+        return () => clearInterval(interval);
+      }
+    }, [DeviceChar]
+  )
 
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       <Text style={styles.h1}>SENSOR VALUE</Text>
-      <Text style={styles.liveDataStyle}>{0}</Text>
-      <TouchableOpacity style={styles.liveDataButtonBlack} onPress={() => {
-        GetServicesLoaded()
+      <Text style={styles.liveDataStyle}>{LiveData}</Text>
+      <TouchableOpacity style={styles.liveDataButtonBlack} onPress={async () => {
+        GetServicesLoaded_Readable()
       }}>
         <Text style={styles.ButtonText}>SHOW LIVE DATA</Text>
       </TouchableOpacity>
