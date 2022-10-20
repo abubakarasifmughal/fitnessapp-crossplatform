@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Alert, PermissionsAndroid, Platform } from "react-native"
-import { BleManager, Device } from "react-native-ble-plx"
+import { BleManager, Characteristic, Device } from "react-native-ble-plx"
 import { atob } from "react-native-quick-base64";
 import { ConnectedDeviceStore, setConnectedDeviceAtStore } from '../shared/store';
 
@@ -16,6 +16,16 @@ interface BluetoothLowEnergyApi {
     scanAllDevices: boolean;
     setScanAllDevices: React.Dispatch<React.SetStateAction<boolean>>;
     isScanningStatus: boolean;
+    // Live Data
+    ConnectedDevice: Device | undefined,
+    setConnectedDevice: React.Dispatch<React.SetStateAction<Device | undefined>>,
+    LiveData: string,
+    setLiveData: React.Dispatch<React.SetStateAction<string>>,
+    DeviceChar: Characteristic[],
+    setDeviceChar: React.Dispatch<React.SetStateAction<Characteristic[]>>,
+    Loaded: boolean,
+    setLoaded: React.Dispatch<React.SetStateAction<boolean>>,
+    GetServicesLoaded_Readable: () => void
 }
 
 const bleManager = new BleManager();
@@ -28,6 +38,11 @@ export default function useBLE(): BluetoothLowEnergyApi {
     const [isScanningStatus, setIsScanningStatus] = useState(false)
     // todo will attach to the datastream later
     const [flexValue, setFlexValue] = useState(0.0)
+
+    const [ConnectedDevice, setConnectedDevice] = useState<Device | undefined>(undefined)
+    const [LiveData, setLiveData] = useState("Press to Start")
+    const [DeviceChar, setDeviceChar] = useState<Characteristic[]>([])
+    const [Loaded, setLoaded] = useState(false)
 
     const requstPermissions = async (callback: PermissionCallback) => {
         if (Platform.OS === 'android') {
@@ -86,9 +101,9 @@ export default function useBLE(): BluetoothLowEnergyApi {
         device.connect()
             .then((connectedDevice) => {
                 ConnectedDeviceStore.dispatch(setConnectedDeviceAtStore({
-                    id:device.id,
-                    localName:device.localName,
-                    name:device.name,
+                    id: device.id,
+                    localName: device.localName,
+                    name: device.name,
                 }))
                 console.log("Connect to ", connectedDevice.name);
             })
@@ -102,8 +117,53 @@ export default function useBLE(): BluetoothLowEnergyApi {
         // todo disconnect
         // let DisconnectedDevice = await bleManager.cancelDeviceConnection(device.id)
         // console.log(DisconnectedDevice.name);
+        setIsScanningStatus(false)
         setScannedDevices([])
     }
+
+    const GetServicesLoaded_Readable = () => {
+        setConnectedDevice(ConnectedDeviceStore.getState().device)
+        bleManager.connectToDevice(ConnectedDevice?.id ?? "")
+            .then(res => {
+                res.discoverAllServicesAndCharacteristics()
+                    .then(res => {
+                        res.connect({ autoConnect: false })
+                            .then(res => {
+                                res.services()
+                                    .then(data => {
+                                        data[0].characteristics()
+                                            .then(char => {
+                                                setDeviceChar((char ?? []))
+                                                setLoaded(true)
+                                            })
+                                            .catch(err => {
+                                                console.log(err);
+                                                setLiveData("Press to Start")
+                                            })
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                        setLiveData("Press to Start")
+                                    })
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                setLiveData("Press to Start")
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        setLiveData("Press to Start")
+                    })
+            })
+            .catch(err => {
+                console.log(err)
+                setLiveData("Press to Start")
+            })
+
+
+    }
+
 
     return {
         requstPermissions,
@@ -114,5 +174,15 @@ export default function useBLE(): BluetoothLowEnergyApi {
         setScanAllDevices,
         disconnectDevice,
         isScanningStatus,
+        // Live Data artifacts
+        ConnectedDevice,
+        setConnectedDevice,
+        LiveData,
+        setLiveData,
+        DeviceChar,
+        setDeviceChar,
+        Loaded,
+        setLoaded,
+        GetServicesLoaded_Readable
     };
 }

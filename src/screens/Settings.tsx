@@ -91,7 +91,9 @@ const Settings = ({ navigation }: { navigation: any }) => {
 
         <TouchableOpacity
           style={styles.metroButtonBlackExtendedSm}
-          onPress={() => disconnectDevice(ConnectedDeviceStore.getState().device as any)}>
+          onPress={() => {
+            disconnectDevice(ConnectedDeviceStore.getState().device as any)
+          }}>
           <Text style={styles.ButtonText}>
             Disconnect
           </Text>

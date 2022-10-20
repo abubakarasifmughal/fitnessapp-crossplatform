@@ -1,21 +1,83 @@
-import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import { Animated, Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
 import Pie_Chart from '../components/Pie_Chart'
+import useBLE from '../shared/useBle'
+import { atob } from 'react-native-quick-base64'
 
 const StatsPage = ({ navigation }: any) => {
     const [LowerBoundary, setLowerBoundary] = useState(-100)
     const [UpperBoundary, setUpperBoundary] = useState(100)
     const [PointerLocation, setPointerLocation] = useState(0)
+    const [ZeroError, setZeroError] = useState("NaN")
 
+
+    const {
+        ConnectedDevice,
+        setConnectedDevice,
+        DeviceChar,
+        setDeviceChar,
+        LiveData,
+        setLiveData,
+        Loaded,
+        setLoaded,
+        GetServicesLoaded_Readable
+    } = useBLE()
+
+    const doZeroErrorCorrection = () => {
+        if (DeviceChar.length == 0) {
+            GetServicesLoaded_Readable()
+        } else {
+            DeviceChar.filter(it => it.isReadable)[0].read()
+                .then(val => {
+                    setZeroError(Number.parseInt(atob(val.value ?? "0")).toString())
+                })
+                .catch(err => {
+                    setZeroError("Press to Start")
+                })
+        }
+    }
+
+    useEffect(
+        () => {
+            if (DeviceChar.length == 0) {
+                GetServicesLoaded_Readable()
+            } else {
+                let interval: number = setInterval(() => {
+                    DeviceChar.filter(it => it.isReadable)[0].read()
+                        .then(val => {
+                            setLiveData(Number.parseInt(atob(val.value ?? "0")).toString())
+                            console.log(Number.parseInt(LiveData));
+                            console.log(Number.parseInt(ZeroError));
+                            if (ZeroError !== "NaN" || LiveData !== "NaN") {
+                                // setPointerLocation(Number.parseInt(LiveData) - Number.parseInt(ZeroError))
+                            }
+                            
+                        })
+                        .catch(err => {
+                            setLiveData("Press to Start")
+                        })
+                }, 1000);
+                return () => {
+                    clearInterval(interval);
+                }
+            }
+            
+        }, [DeviceChar]
+    )
 
     return (
         <ScrollView>
             <TouchableOpacity onPress={() => {
-                 setPointerLocation(90)
-            }} style={{ height: 40 }} />
-            <TestNameInputField />
+                setPointerLocation(Number.parseInt(LiveData) - Number.parseInt(ZeroError))
+            }} style={{ height: 40 }} >
+                <Text>{LiveData} - {ZeroError} = {Number.parseInt(LiveData) - Number.parseInt(ZeroError)}</Text>
+            </TouchableOpacity>
+
+            <TestNameInputField
+                pressHandler={GetServicesLoaded_Readable} />
+            <Button title='Fix Zero Error' onPress={doZeroErrorCorrection} />
             <PointerSlider
                 LowerBoundary={LowerBoundary}
                 UpperBoundary={UpperBoundary}

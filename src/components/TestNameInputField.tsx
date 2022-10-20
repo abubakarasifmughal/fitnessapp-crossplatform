@@ -1,12 +1,13 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
 
-const TestNameInputField = () => {
+const TestNameInputField = ({ pressHandler }: { pressHandler: any }) => {
     return (
         <View style={styles.ShadowedContainer}>
             <View style={styles.Card}>
                 <TextInput style={styles.InputField} />
-                <Text style={styles.ActionButton}>GO</Text>
+                <Text style={styles.ActionButton}
+                onPress={pressHandler}>GO</Text>
             </View>
         </View>
     )
@@ -24,6 +25,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row', justifyContent: 'center', marginTop: 10, paddingLeft: 10, paddingRight: 10,
         marginBottom: 10, backgroundColor: 'white', width: "70%", borderRadius: 5,
     },
-    InputField : { width: '80%', padding: 5, borderColor: 'gray', borderWidth: 2, borderRadius: 5 },
-    ActionButton : { width: '20%', textAlign: 'center', color: 'rgb(0,150,255)', fontWeight: 'bold', fontSize: 17, }
+    InputField: { width: '80%', padding: 5, borderColor: 'gray', borderWidth: 2, borderRadius: 5 },
+    ActionButton: { width: '20%', textAlign: 'center', color: 'rgb(0,150,255)', fontWeight: 'bold', fontSize: 17, }
 })

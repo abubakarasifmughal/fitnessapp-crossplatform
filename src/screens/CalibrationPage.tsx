@@ -1,63 +1,74 @@
 import { Alert, Animated, Button, Dimensions, Easing, NativeAppEventEmitter, NativeModules, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
-import { BleManager, Characteristic, Device, Service } from 'react-native-ble-plx';
+// import { BleManager, Characteristic, Device, Service } from 'react-native-ble-plx';
 import useBLE from '../shared/useBle';
-import { ConnectedDeviceStore } from '../shared/store'
+// import { ConnectedDeviceStore } from '../shared/store'
 import { atob } from 'react-native-quick-base64';
 
-const bleManager = new BleManager()
+// const bleManager = new BleManager()
 
 const CalibrationPage = ({ navigation }: { navigation: any }) => {
-  const [ConnectedDevice, setConnectedDevice] = useState<Device | undefined>(undefined)
-  const [DeviceChar, setDeviceChar] = useState<Characteristic[]>([])
+  // const [ConnectedDevice, setConnectedDevice] = useState<Device | undefined>(undefined)
+  // const [DeviceChar, setDeviceChar] = useState<Characteristic[]>([])
 
-  const [LiveData, setLiveData] = useState("Press to Start")
+  // const [LiveData, setLiveData] = useState("Press to Start")
 
-  const [Loaded, setLoaded] = useState(false)
-  const GetServicesLoaded_Readable = () => {
-    setConnectedDevice(ConnectedDeviceStore.getState().device)
-    bleManager.connectToDevice(ConnectedDevice?.id ?? "")
-      .then(res => {
-        res.discoverAllServicesAndCharacteristics()
-          .then(res => {
-            res.connect({ autoConnect: false })
-              .then(res => {
-                res.services()
-                  .then(data => {
-                    data[0].characteristics()
-                      .then(char => {
-                        setDeviceChar((char ?? []))
-                        setLoaded(true)
-                      })
-                      .catch(err => {
-                        console.log(err);
-                        setLiveData("Press to Start")
-                      })
-                  })
-                  .catch(err => {
-                    console.log(err);
-                    setLiveData("Press to Start")
-                  })
-              })
-              .catch(err => {
-                console.log(err);
-                setLiveData("Press to Start")
-              })
-          })
-          .catch(err => {
-            console.log(err);
-            setLiveData("Press to Start")
-          })
-      })
-      .catch(err => {
-        console.log(err)
-        setLiveData("Press to Start")
-      })
+  // const [Loaded, setLoaded] = useState(false)
+  // const GetServicesLoaded_Readable = () => {
+  //   setConnectedDevice(ConnectedDeviceStore.getState().device)
+  //   bleManager.connectToDevice(ConnectedDevice?.id ?? "")
+  //     .then(res => {
+  //       res.discoverAllServicesAndCharacteristics()
+  //         .then(res => {
+  //           res.connect({ autoConnect: false })
+  //             .then(res => {
+  //               res.services()
+  //                 .then(data => {
+  //                   data[0].characteristics()
+  //                     .then(char => {
+  //                       setDeviceChar((char ?? []))
+  //                       setLoaded(true)
+  //                     })
+  //                     .catch(err => {
+  //                       console.log(err);
+  //                       setLiveData("Press to Start")
+  //                     })
+  //                 })
+  //                 .catch(err => {
+  //                   console.log(err);
+  //                   setLiveData("Press to Start")
+  //                 })
+  //             })
+  //             .catch(err => {
+  //               console.log(err);
+  //               setLiveData("Press to Start")
+  //             })
+  //         })
+  //         .catch(err => {
+  //           console.log(err);
+  //           setLiveData("Press to Start")
+  //         })
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //       setLiveData("Press to Start")
+  //     })
 
 
-  }
+  // }
 
+  const {
+    ConnectedDevice,
+    setConnectedDevice,
+    DeviceChar,
+    setDeviceChar,
+    LiveData,
+    setLiveData,
+    Loaded,
+    setLoaded,
+    GetServicesLoaded_Readable
+  } = useBLE()
 
   useEffect(
     () => {
@@ -72,7 +83,7 @@ const CalibrationPage = ({ navigation }: { navigation: any }) => {
             .catch(err => {
               setLiveData("Press to Start")
             })
-        }, 1000);
+        }, 500);
         return () => clearInterval(interval);
       }
     }, [DeviceChar]
