@@ -3,6 +3,7 @@ import AboutPage from "../../screens/AboutPage"
 import StatsPage from "../../screens/StatsPage"
 import CalibrationStack from "../stack/CalibrationStack"
 import PlanStack from "../stack/PlanStack"
+import StatsStack from "../stack/StatsStack"
 import TrainingsStack from "../stack/TrainingsStack"
 
 const iconStyle = { height: 20, width: 20 }
@@ -35,8 +36,8 @@ const Routes = [
     },
     {
         name: 'Statistics',
-        component: StatsPage,
-        headerShown:true,
+        component: StatsStack,
+        headerShown:false,
         icons: (active: boolean) => <Image source={require('../../../assets/stats.png')}
         style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />

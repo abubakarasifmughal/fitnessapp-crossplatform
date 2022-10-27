@@ -25,11 +25,11 @@ const PointerSlider = (
     const SpectrumColors = ['red', 'yellow', '#12AD2B', 'yellow', 'red']
     const lowerPointerBar = useRef(new Animated.Value(LowerBoundary)).current;
     const upperPointerBar = useRef(new Animated.Value(UpperBoundary)).current;
-    const pointerLocation = useRef(new Animated.Value(PointerLocation)).current;
+    const pointerLocation = useRef(new Animated.Value(0)).current;
 
-
+    
     useEffect(() => {
-
+        if(JSON.stringify(PointerLocation) !== 'null'){
         Animated.timing(lowerPointerBar, {
             toValue: LowerBoundary,
             useNativeDriver: true,
@@ -49,8 +49,7 @@ const PointerSlider = (
             duration: POINTER_DURATION,
             easing: Easing.elastic(ELASTIC_AMOUNT)
         }).start()
-
-
+        }
     }, [LowerBoundary, UpperBoundary, PointerLocation])
 
     return (
@@ -58,7 +57,7 @@ const PointerSlider = (
             <Text style={styles.PositionLabel}>Current Position</Text>
             <View style={styles.PointerSpace}>
                 <Animated.Image source={require('../../assets/pointer.png')}
-                    style={{ width: 40, height: 40, transform: [{ translateX: pointerLocation }] }}
+                    style={{ width: 40, height: 40, transform: [{ translateX:  pointerLocation }] }}
                     resizeMode="contain" />
 
             </View>
@@ -105,3 +104,8 @@ const styles = StyleSheet.create({
         transform: [{ translateY: 45 }], alignItems: 'center',
     },
 })
+
+// back = 689
+// 0 = 1680
+// forw = 1856
+// ---------------

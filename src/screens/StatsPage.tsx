@@ -1,4 +1,4 @@
-import { Animated, Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Button, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
@@ -11,7 +11,6 @@ const StatsPage = ({ navigation }: any) => {
     const [UpperBoundary, setUpperBoundary] = useState(100)
     const [PointerLocation, setPointerLocation] = useState(0)
     const [ZeroError, setZeroError] = useState("NaN")
-
 
     const {
         ConnectedDevice,
@@ -48,12 +47,11 @@ const StatsPage = ({ navigation }: any) => {
                     DeviceChar.filter(it => it.isReadable)[0].read()
                         .then(val => {
                             setLiveData(Number.parseInt(atob(val.value ?? "0")).toString())
-                            console.log(Number.parseInt(LiveData));
-                            console.log(Number.parseInt(ZeroError));
+
                             if (ZeroError !== "NaN" || LiveData !== "NaN") {
                                 // setPointerLocation(Number.parseInt(LiveData) - Number.parseInt(ZeroError))
                             }
-                            
+
                         })
                         .catch(err => {
                             setLiveData("Press to Start")
@@ -63,25 +61,30 @@ const StatsPage = ({ navigation }: any) => {
                     clearInterval(interval);
                 }
             }
-            
+
         }, [DeviceChar]
     )
 
     return (
-        <ScrollView>
-            <TouchableOpacity onPress={() => {
+        <ScrollView >
+            {/* <TouchableOpacity onPress={() => {
                 setPointerLocation(Number.parseInt(LiveData) - Number.parseInt(ZeroError))
             }} style={{ height: 40 }} >
                 <Text>{LiveData} - {ZeroError} = {Number.parseInt(LiveData) - Number.parseInt(ZeroError)}</Text>
-            </TouchableOpacity>
-
+            </TouchableOpacity> */}
             <TestNameInputField
                 pressHandler={GetServicesLoaded_Readable} />
             <Button title='Fix Zero Error' onPress={doZeroErrorCorrection} />
             <PointerSlider
                 LowerBoundary={LowerBoundary}
                 UpperBoundary={UpperBoundary}
-                PointerLocation={PointerLocation}
+                PointerLocation={
+                    (
+                        (
+                            Number.parseInt(LiveData) - Number.parseInt(ZeroError)
+                        ) / 200
+                    ) * 100
+                }
                 setLowerBoundary={setLowerBoundary}
                 setUpperBoundary={setUpperBoundary}
                 setPointerLocation={setPointerLocation}
@@ -99,6 +102,16 @@ const StatsPage = ({ navigation }: any) => {
                 PointerLocation={PointerLocation}
             />
             <Pie_Chart />
+            <View style={{ height: 60 }} />
+
+            <View style={[styles.RowMargined,{}]}>
+                <TouchableOpacity style={styles.CalibrationButton}
+                    onPress={() => {
+                        navigation.navigate("Statistics Movement Graph")
+                    }}>
+                    <Text style={styles.ButtonText}>Movement Graph</Text>
+                </TouchableOpacity>
+            </View>
             <View style={{ height: 120 }} />
         </ScrollView>
     )
@@ -172,6 +185,7 @@ const StopButton = ({
         }
     }
 }
+
 
 export default StatsPage
 

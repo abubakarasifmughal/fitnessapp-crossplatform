@@ -9,54 +9,6 @@ import { atob } from 'react-native-quick-base64';
 // const bleManager = new BleManager()
 
 const CalibrationPage = ({ navigation }: { navigation: any }) => {
-  // const [ConnectedDevice, setConnectedDevice] = useState<Device | undefined>(undefined)
-  // const [DeviceChar, setDeviceChar] = useState<Characteristic[]>([])
-
-  // const [LiveData, setLiveData] = useState("Press to Start")
-
-  // const [Loaded, setLoaded] = useState(false)
-  // const GetServicesLoaded_Readable = () => {
-  //   setConnectedDevice(ConnectedDeviceStore.getState().device)
-  //   bleManager.connectToDevice(ConnectedDevice?.id ?? "")
-  //     .then(res => {
-  //       res.discoverAllServicesAndCharacteristics()
-  //         .then(res => {
-  //           res.connect({ autoConnect: false })
-  //             .then(res => {
-  //               res.services()
-  //                 .then(data => {
-  //                   data[0].characteristics()
-  //                     .then(char => {
-  //                       setDeviceChar((char ?? []))
-  //                       setLoaded(true)
-  //                     })
-  //                     .catch(err => {
-  //                       console.log(err);
-  //                       setLiveData("Press to Start")
-  //                     })
-  //                 })
-  //                 .catch(err => {
-  //                   console.log(err);
-  //                   setLiveData("Press to Start")
-  //                 })
-  //             })
-  //             .catch(err => {
-  //               console.log(err);
-  //               setLiveData("Press to Start")
-  //             })
-  //         })
-  //         .catch(err => {
-  //           console.log(err);
-  //           setLiveData("Press to Start")
-  //         })
-  //     })
-  //     .catch(err => {
-  //       console.log(err)
-  //       setLiveData("Press to Start")
-  //     })
-
-
-  // }
 
   const {
     ConnectedDevice,
