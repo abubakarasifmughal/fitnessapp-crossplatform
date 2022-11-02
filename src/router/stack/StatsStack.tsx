@@ -18,9 +18,9 @@ const StatsStack = () => {
                 headerTintColor: 'black',
                 headerTitleAlign: 'center'
             }}>
-                <Stack.Screen name={'Statistics'} component={StatsPage} options={{}} />
                 <Stack.Screen name={'Statistics Movement Graph'} options={{title:'Track Your Workout'}}
                 component={StatsBarGraph} />
+                <Stack.Screen name={'Statistics Page'} component={StatsPage} options={{title:'Statistics'}} />
             </Stack.Navigator>
         </View>
     )

@@ -40,7 +40,7 @@ export default Pie_Chart
 const styles = StyleSheet.create({
     PieContainer: {
         alignSelf: 'center',
-        marginTop: 100,
+        marginTop: 40,
     },
     PieChartTextContainer: { position: 'absolute', justifyContent: 'center', alignSelf: 'center', height: width / 2, },
     PieChartText: {

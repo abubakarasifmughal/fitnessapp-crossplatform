@@ -1,4 +1,4 @@
-import { Animated, Button, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native'
+import { Animated, Button, Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
@@ -6,11 +6,17 @@ import Pie_Chart from '../components/Pie_Chart'
 import useBLE from '../shared/useBle'
 import { atob } from 'react-native-quick-base64'
 
+const TOTAL_SIDE_LENGTH = 165;
+
 const StatsPage = ({ navigation }: any) => {
     const [LowerBoundary, setLowerBoundary] = useState(-100)
     const [UpperBoundary, setUpperBoundary] = useState(100)
     const [PointerLocation, setPointerLocation] = useState(0)
     const [ZeroError, setZeroError] = useState("NaN")
+
+    const [CalibrationInProgress, setCalibrationInProgress] = useState(true)
+    const [NegativeError, setNegativeError] = useState<number | null>(null)
+    const [PositiveError, setPositiveError] = useState<number | null>(null)
 
     const {
         ConnectedDevice,
@@ -47,11 +53,6 @@ const StatsPage = ({ navigation }: any) => {
                     DeviceChar.filter(it => it.isReadable)[0].read()
                         .then(val => {
                             setLiveData(Number.parseInt(atob(val.value ?? "0")).toString())
-
-                            if (ZeroError !== "NaN" || LiveData !== "NaN") {
-                                // setPointerLocation(Number.parseInt(LiveData) - Number.parseInt(ZeroError))
-                            }
-
                         })
                         .catch(err => {
                             setLiveData("Press to Start")
@@ -66,54 +67,113 @@ const StatsPage = ({ navigation }: any) => {
     )
 
     return (
-        <ScrollView >
-            {/* <TouchableOpacity onPress={() => {
-                setPointerLocation(Number.parseInt(LiveData) - Number.parseInt(ZeroError))
-            }} style={{ height: 40 }} >
-                <Text>{LiveData} - {ZeroError} = {Number.parseInt(LiveData) - Number.parseInt(ZeroError)}</Text>
-            </TouchableOpacity> */}
-            <TestNameInputField
-                pressHandler={GetServicesLoaded_Readable} />
-            <Button title='Fix Zero Error' onPress={doZeroErrorCorrection} />
-            <PointerSlider
-                LowerBoundary={LowerBoundary}
-                UpperBoundary={UpperBoundary}
-                PointerLocation={
-                    (
-                        (
-                            Number.parseInt(LiveData) - Number.parseInt(ZeroError)
-                        ) / 200
-                    ) * 100
-                }
-                setLowerBoundary={setLowerBoundary}
-                setUpperBoundary={setUpperBoundary}
-                setPointerLocation={setPointerLocation}
-            />
-            <CalibrationButtons
-                LowerBoundary={LowerBoundary}
-                UpperBoundary={UpperBoundary}
-                PointerLocation={PointerLocation}
-                setLowerBoundary={setLowerBoundary}
-                setUpperBoundary={setUpperBoundary}
-                setPointerLocation={setPointerLocation}
-            />
-            <StopButton
-                setPointerLocation={setPointerLocation}
-                PointerLocation={PointerLocation}
-            />
-            <Pie_Chart />
-            <View style={{ height: 60 }} />
-
-            <View style={[styles.RowMargined,{}]}>
-                <TouchableOpacity style={styles.CalibrationButton}
-                    onPress={() => {
-                        navigation.navigate("Statistics Movement Graph")
-                    }}>
-                    <Text style={styles.ButtonText}>Movement Graph</Text>
+        <>
+            <ScrollView >
+                {/* <TouchableOpacity style={{ marginTop: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'center' }} >
+                    <Text style={{ textAlign: 'center' }}>({NegativeError},0,{PositiveError}) :: {LiveData} - {ZeroError} = </Text>
+                    <Text style={{ textAlign: 'center', color: (Number.parseInt(LiveData) - Number.parseInt(ZeroError)) > 0 ? 'green' : 'red' }}>{(Number.parseInt(LiveData) - Number.parseInt(ZeroError))}</Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity style={{ marginTop: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'center' }} >
+                    <Text style={{ textAlign: 'center', color: (Number.parseInt(LiveData) - Number.parseInt(ZeroError)) > 0 ? 'green' : 'red' }}>{
+                        ((
+                            (
+                                Number.parseInt(LiveData) - Number.parseInt(ZeroError)
+                            ) / (Number.parseInt(LiveData) - Number.parseInt(ZeroError) > 0 ? (PositiveError ?? 0) : (NegativeError ?? 0)) //This number here defines one side of scale
+                        ) * TOTAL_SIDE_LENGTH).toFixed(0)
+                    }</Text>
                 </TouchableOpacity>
-            </View>
-            <View style={{ height: 120 }} />
-        </ScrollView>
+                <TestNameInputField
+                    pressHandler={GetServicesLoaded_Readable} />
+                <Button title='Calibrate' onPress={() => {
+                    setNegativeError(null)
+                    setPositiveError(null)
+                    setCalibrationInProgress(true)
+                }} />
+                <PointerSlider
+                    LowerBoundary={LowerBoundary}
+                    UpperBoundary={UpperBoundary}
+                    PointerLocation={
+                        (
+                            (
+                                Number.parseInt(LiveData) - Number.parseInt(ZeroError)
+                            ) / (Number.parseInt(LiveData) - Number.parseInt(ZeroError) > 0 ? (PositiveError ?? 0) : (NegativeError ?? 0)) //This number here defines one side of scale
+                        ) * TOTAL_SIDE_LENGTH
+                    }
+                    setLowerBoundary={setLowerBoundary}
+                    setUpperBoundary={setUpperBoundary}
+                    setPointerLocation={setPointerLocation}
+                />
+                <CalibrationButtons
+                    LowerBoundary={LowerBoundary}
+                    UpperBoundary={UpperBoundary}
+                    PointerLocation={PointerLocation}
+                    setLowerBoundary={setLowerBoundary}
+                    setUpperBoundary={setUpperBoundary}
+                    setPointerLocation={setPointerLocation}
+                />
+                <StopButton
+                    setPointerLocation={setPointerLocation}
+                    PointerLocation={PointerLocation}
+                />
+                <Pie_Chart />
+                <View style={{ height: 20 }} />
+
+                <View style={[styles.RowMargined, {}]}>
+                    <TouchableOpacity style={styles.CalibrationButton}
+                        onPress={() => {
+                            navigation.navigate("Statistics Movement Graph")
+                        }}>
+                        <Text style={styles.ButtonText}>Movement Graph</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ height: 120 }} />
+            </ScrollView>
+            <Modal visible={CalibrationInProgress} animationType='slide' transparent={true}>
+                <View style={{ height: '100%', backgroundColor: 'rgba(0,0,0,0.9)', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: 'white', fontSize: 25, fontWeight: '600', marginBottom: 20 }}>Calibrate Device</Text>
+                    {
+                        ZeroError === 'NaN' &&
+                        <>
+                            <Button title='Start Calibration' onPress={doZeroErrorCorrection} />
+                            <Button title='Cancel' color={'red'} onPress={() => setCalibrationInProgress(false)} />
+                        </>
+                    }
+                    {
+                        ZeroError !== 'NaN' &&
+                        <>
+                            {
+                                NegativeError === null &&
+                                <>
+                                    <Text style={{ color: 'white', fontSize: 17, fontWeight: '600', marginTop: 10 }}>Flex the device to lowest negative number</Text>
+                                    <TouchableOpacity style={{ marginTop: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'center' }} >
+                                        <Text style={{ textAlign: 'center', color: 'white' }}>{LiveData} - {ZeroError} = </Text>
+                                        <Text style={{ textAlign: 'center', color: (Number.parseInt(LiveData) - Number.parseInt(ZeroError)) > 0 ? 'green' : 'red' }}>{(Number.parseInt(LiveData) - Number.parseInt(ZeroError))}</Text>
+                                    </TouchableOpacity>
+
+                                    <Button title='Calibrate Negative' color={'red'} onPress={() => {
+                                        setNegativeError(-(Number.parseInt(LiveData) - Number.parseInt(ZeroError)))
+                                    }} />
+                                </>
+                            }
+                            {
+                                PositiveError === null && NegativeError !== null &&
+                                <>
+                                    <Text style={{ color: 'white', fontSize: 17, fontWeight: '600', marginTop: 10 }}>Flex the device to highest positive number</Text>
+                                    <TouchableOpacity style={{ marginTop: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'center' }} >
+                                        <Text style={{ textAlign: 'center', color: 'white' }}>{LiveData} - {ZeroError} = </Text>
+                                        <Text style={{ textAlign: 'center', color: (Number.parseInt(LiveData) - Number.parseInt(ZeroError)) > 0 ? 'green' : 'red' }}>{(Number.parseInt(LiveData) - Number.parseInt(ZeroError))}</Text>
+                                    </TouchableOpacity>
+                                    <Button title='Calibrate Positive' color={'green'} onPress={() => {
+                                        setPositiveError((Number.parseInt(LiveData) - Number.parseInt(ZeroError)))
+                                        setCalibrationInProgress(false)
+                                    }} />
+                                </>
+                            }
+                        </>
+                    }
+                </View>
+            </Modal>
+        </>
     )
 }
 

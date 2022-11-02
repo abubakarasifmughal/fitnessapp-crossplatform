@@ -20,7 +20,7 @@ const PointerSlider = (
     }
 ) => {
     const DURATION = 1000;
-    const POINTER_DURATION = 1000;
+    const POINTER_DURATION = 700;
     const ELASTIC_AMOUNT = 2;
     const SpectrumColors = ['red', 'yellow', '#12AD2B', 'yellow', 'red']
     const lowerPointerBar = useRef(new Animated.Value(LowerBoundary)).current;
@@ -47,7 +47,8 @@ const PointerSlider = (
             toValue: PointerLocation,
             useNativeDriver: true,
             duration: POINTER_DURATION,
-            easing: Easing.elastic(ELASTIC_AMOUNT)
+            // easing: Easing.elastic(ELASTIC_AMOUNT)
+            easing: Easing.linear
         }).start()
         }
     }, [LowerBoundary, UpperBoundary, PointerLocation])
