@@ -12,6 +12,7 @@ const StatsBarGraph = () => {
       }}> */}
       <View style={{ alignItems: 'center', paddingTop: 20, marginBottom: 20 }}>
         <LineChart
+        
           data={{
             labels: [],
             datasets: [
