@@ -86,7 +86,7 @@ const VideoComponent = () => {
 
         <>
             <Modal visible={PipEnabled === VIDEOSTATUS.MAXIMIZED} animationType='slide'>
-                <SafeAreaView style={{ backgroundColor: 'black', height: height }}>
+                <SafeAreaView style={{ backgroundColor: 'black', height: "100%" }}>
                     {VIDEO_AND_LOADER(YTLoaded, VideoPlayerData, YTRef, ExtractVideoID, setYTLoaded)}
 
                     <View style={{ flexDirection: 'row-reverse', backgroundColor: 'white', alignItems: 'center' }}>

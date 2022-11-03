@@ -2,7 +2,9 @@ import { SafeAreaView, StyleSheet, } from 'react-native'
 import React from 'react'
 import { BottomTabs } from './src/router/bottomtabs/BottomTabs';
 import VideoComponent from './src/components/VideoComponent';
-import BT from './src/screens/BT';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 
 export default function App() {

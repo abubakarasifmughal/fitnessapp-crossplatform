@@ -9,14 +9,6 @@ import TrainingsStack from "../stack/TrainingsStack"
 const iconStyle = { height: 20, width: 20 }
 
 const Routes = [
-        {
-        name: 'Statistics',
-        component: StatsStack,
-        headerShown:false,
-        icons: (active: boolean) => <Image source={require('../../../assets/stats.png')}
-        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
-        resizeMode="contain" />
-    },
     {
         name: 'Calibration',
         component: CalibrationStack,
@@ -42,14 +34,14 @@ const Routes = [
         style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
         resizeMode="contain" />
     },
-    // {
-    //     name: 'Statistics',
-    //     component: StatsStack,
-    //     headerShown:false,
-    //     icons: (active: boolean) => <Image source={require('../../../assets/stats.png')}
-    //     style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
-    //     resizeMode="contain" />
-    // },
+    {
+        name: 'Statistics',
+        component: StatsStack,
+        headerShown:false,
+        icons: (active: boolean) => <Image source={require('../../../assets/stats.png')}
+        style={[iconStyle, { tintColor: active ? 'red' : 'gray' }]}
+        resizeMode="contain" />
+    },
     {
         name: 'About',
         component: AboutPage,

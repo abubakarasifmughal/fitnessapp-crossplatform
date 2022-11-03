@@ -64,3 +64,109 @@ export const { setConnectedDeviceAtStore } = DeviceSlice.actions;
 export const ConnectedDeviceStore = configureStore({
     reducer: DeviceSlice.reducer
 })
+
+const LowerLimitSlice = createSlice({
+    name: 'LowerLimit',
+    initialState: {
+        value: 0
+    },
+    reducers: {
+        setLowerLimit: (state, action) => {
+            state.value = action.payload
+        }
+    }
+})
+
+export const { setLowerLimit } = LowerLimitSlice.actions;
+export const LowerLimitStore = configureStore({
+    reducer: LowerLimitSlice.reducer
+})
+
+const UpperLimitSlice = createSlice({
+    'name': 'UpperLimit',
+    initialState: {
+        value: 0
+    },
+    reducers: {
+        setUpperLimit: (state, action) => {
+            state.value = action.payload
+        }
+    }
+})
+
+export const { setUpperLimit } = UpperLimitSlice.actions;
+export const UpperLimitStore = configureStore({
+    reducer: UpperLimitSlice.reducer
+})
+
+
+// Hard
+
+const Hard_LowerLimitSlice = createSlice({
+    name: 'Hard_LowerLimit',
+    initialState: {
+        value: 0
+    },
+    reducers: {
+        setHard_LowerLimit: (state, action) => {
+            state.value = action.payload
+        }
+    }
+})
+
+export const { setHard_LowerLimit } = Hard_LowerLimitSlice.actions;
+export const Hard_LowerLimitStore = configureStore({
+    reducer: Hard_LowerLimitSlice.reducer
+})
+
+const Hard_UpperLimitSlice = createSlice({
+    'name': 'Hard_UpperLimit',
+    initialState: {
+        value: 0
+    },
+    reducers: {
+        setHard_UpperLimit: (state, action) => {
+            state.value = action.payload
+        }
+    }
+})
+
+export const { setHard_UpperLimit } = Hard_UpperLimitSlice.actions;
+export const Hard_UpperLimitStore = configureStore({
+    reducer: UpperLimitSlice.reducer
+})
+// Normal
+
+const Normal_LowerLimitSlice = createSlice({
+    name: 'Normal_LowerLimit',
+    initialState: {
+        value: 0
+    },
+    reducers: {
+        setNormal_LowerLimit: (state, action) => {
+            state.value = action.payload
+        }
+    }
+})
+
+export const { setNormal_LowerLimit } = Normal_LowerLimitSlice.actions;
+export const Normal_LowerLimitStore = configureStore({
+    reducer: Normal_LowerLimitSlice.reducer
+})
+
+const Normal_UpperLimitSlice = createSlice({
+    'name': 'Normal_UpperLimit',
+    initialState: {
+        value: 0
+    },
+    reducers: {
+        setNormal_UpperLimit: (state, action) => {
+            state.value = action.payload
+        }
+    }
+})
+
+export const { setNormal_UpperLimit } = Normal_UpperLimitSlice.actions;
+export const Normal_UpperLimitStore = configureStore({
+    reducer: UpperLimitSlice.reducer
+})

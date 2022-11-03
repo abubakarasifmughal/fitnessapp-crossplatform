@@ -123,6 +123,14 @@ export default function useBLE(): BluetoothLowEnergyApi {
 
     const GetServicesLoaded_Readable = () => {
         setConnectedDevice(ConnectedDeviceStore.getState().device)
+        if (!ConnectedDevice?.id) {
+            Alert.alert("No Connection!","No device connected, try enabling bluetooth and scanning device",[
+                {
+                    text:"Scan Now",
+                }
+            ])
+            return
+        }
         bleManager.connectToDevice(ConnectedDevice?.id ?? "")
             .then(res => {
                 res.discoverAllServicesAndCharacteristics()

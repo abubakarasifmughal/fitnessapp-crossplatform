@@ -1,4 +1,4 @@
-import { Animated, Button, Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native'
+import { Animated, Button, Dimensions, Modal, ScrollView, StyleSheet, Text, Touchable, TouchableOpacity, View, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
@@ -84,11 +84,14 @@ const StatsPage = ({ navigation }: any) => {
                 </TouchableOpacity>
                 <TestNameInputField
                     pressHandler={GetServicesLoaded_Readable} />
-                <Button title='Calibrate' onPress={() => {
+
+                <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => {
                     setNegativeError(null)
                     setPositiveError(null)
                     setCalibrationInProgress(true)
-                }} />
+                }}>
+                    <Text style={{ color: 'rgb(90,90,240)', fontSize: 18 }}>Calibrate</Text>
+                </TouchableOpacity>
                 <PointerSlider
                     LowerBoundary={LowerBoundary}
                     UpperBoundary={UpperBoundary}
@@ -134,15 +137,17 @@ const StatsPage = ({ navigation }: any) => {
                     {
                         ZeroError === 'NaN' &&
                         <>
-                            <Button title='Start Calibration' onPress={doZeroErrorCorrection} />
-                            <Button title='Cancel' color={'red'} onPress={() => setCalibrationInProgress(false)} />
+
                         </>
                     }
+                    <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={doZeroErrorCorrection}>
+                        <Text style={{ color: 'rgb(70,70,255)', fontSize: 18 }}>Fix Zero</Text>
+                    </TouchableOpacity>
                     {
-                        ZeroError !== 'NaN' &&
+                        (ZeroError !== 'NaN') &&
                         <>
                             {
-                                NegativeError === null &&
+                                (NegativeError === null) &&
                                 <>
                                     <Text style={{ color: 'white', fontSize: 17, fontWeight: '600', marginTop: 10 }}>Flex the device to lowest negative number</Text>
                                     <TouchableOpacity style={{ marginTop: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'center' }} >
@@ -150,9 +155,12 @@ const StatsPage = ({ navigation }: any) => {
                                         <Text style={{ textAlign: 'center', color: (Number.parseInt(LiveData) - Number.parseInt(ZeroError)) > 0 ? 'green' : 'red' }}>{(Number.parseInt(LiveData) - Number.parseInt(ZeroError))}</Text>
                                     </TouchableOpacity>
 
-                                    <Button title='Calibrate Negative' color={'red'} onPress={() => {
+
+                                    <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => {
                                         setNegativeError(-(Number.parseInt(LiveData) - Number.parseInt(ZeroError)))
-                                    }} />
+                                    }}>
+                                        <Text style={{ color: 'red', fontSize: 18 }}>Calibrate Negative</Text>
+                                    </TouchableOpacity>
                                 </>
                             }
                             {
@@ -163,14 +171,20 @@ const StatsPage = ({ navigation }: any) => {
                                         <Text style={{ textAlign: 'center', color: 'white' }}>{LiveData} - {ZeroError} = </Text>
                                         <Text style={{ textAlign: 'center', color: (Number.parseInt(LiveData) - Number.parseInt(ZeroError)) > 0 ? 'green' : 'red' }}>{(Number.parseInt(LiveData) - Number.parseInt(ZeroError))}</Text>
                                     </TouchableOpacity>
-                                    <Button title='Calibrate Positive' color={'green'} onPress={() => {
+
+                                    <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => {
                                         setPositiveError((Number.parseInt(LiveData) - Number.parseInt(ZeroError)))
                                         setCalibrationInProgress(false)
-                                    }} />
+                                    }}>
+                                        <Text style={{ color: 'green', fontSize: 18 }}>Calibrate Positive</Text>
+                                    </TouchableOpacity>
                                 </>
                             }
                         </>
                     }
+                    <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => setCalibrationInProgress(false)}>
+                        <Text style={{ color: 'red', fontSize: 18 }}>CANCEL</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
         </>

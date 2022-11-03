@@ -13,13 +13,11 @@ const CalibrationStack = () => {
         <View style={{ height: '100%', }}>
             <Stack.Navigator initialRouteName="Home" screenOptions={{
                 headerShown: true,
-                headerBackTitleVisible:false,
-                headerTintColor:'black',
-                headerTitleAlign:'center'
+                headerBackTitleVisible: false,
+                headerTintColor: 'black',
+                headerTitleAlign: 'center'
             }}>
-                <Stack.Screen name={'Calibrations'} component={Settings} options={{
-                title:"Settings"
-                }}/>
+                <Stack.Screen name={'Calibrations'} component={Settings} options={{ title: "Settings" }} />
                 <Stack.Screen name={'Calibration Settings'} component={CalibrationPage} />
             </Stack.Navigator>
         </View>
