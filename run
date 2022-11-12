@@ -1,5 +1,0 @@
-react-native run-ios --simulator='iPhone 14 Pro'
-
-//  private final static String CHARACTERISTIC_READABLE = "4ac8a682-9736-4e5d-932b-e9b31405049c";
-//     private final static String CHARACTERISTIC_WRITABLE = "0972EF8C-7613-4075-AD52-756F33D4DA91";
-//     private final static String CHARACTERISTIC_NOTIFICATION = "UTF-8";

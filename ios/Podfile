@@ -4,7 +4,8 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'fitnessapp' do
+
+target 'backaware' do
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -25,9 +26,8 @@ target 'fitnessapp' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-  
 
-  target 'fitnessappTests' do
+  target 'backawareTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -41,4 +41,7 @@ target 'fitnessapp' do
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
+
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-BluetoothPeripheral', :path => "#{permissions_path}/BluetoothPeripheral"
 end

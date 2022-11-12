@@ -1,172 +1,61 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { Device } from "react-native-ble-plx";
-import { VIDEOSTATUS } from "./VIDEOSTATUS";
 
-
-// Video Player Floating
-const VideoStatusSlice = createSlice({
-    name: 'videoStatus',
+const ConnectedDeviceSlice = createSlice({
+    name: 'ConnectedDevice',
     initialState: {
-        videoStatusState: VIDEOSTATUS.CLOSED
+        device: ""
     },
     reducers: {
-        maximizeVideo: state => {
-            state.videoStatusState = VIDEOSTATUS.MAXIMIZED
-        },
-        floatVideo: state => {
-            state.videoStatusState = VIDEOSTATUS.FLOATING
-        },
-        closeVideo: state => {
-            state.videoStatusState = VIDEOSTATUS.CLOSED
-        }
-    }
-});
-
-export const { maximizeVideo, floatVideo, closeVideo } = VideoStatusSlice.actions
-export const VideoStore = configureStore({
-    reducer: VideoStatusSlice.reducer,
-})
-
-// Video Player Data
-const VideoPlayerDataSlice = createSlice({
-    name: 'videoPlayerData',
-    initialState: {
-        playerData: {
-            playlist: [], //{playlist:{title:urk}}[]
-            activeIndex: 0
-        }
-    },
-    reducers: {
-        setPlayerData: (state, action) => {
-            state.playerData = action.payload
-        }
-    }
-});
-
-export const { setPlayerData } = VideoPlayerDataSlice.actions
-export const VideoPlayerDataStore = configureStore({
-    reducer: VideoPlayerDataSlice.reducer
-})
-
-const DeviceSlice = createSlice({
-    name: "ConnectedDevice",
-    initialState: {
-        device: undefined
-    },
-    reducers: {
-        setConnectedDeviceAtStore: (state, action) => {
+        setConnectedDeviceInStore: (state, action) => {
             state.device = action.payload
+        },
+        clearConnectedDeviceInStore: (state) => {
+            state.device = ""
         }
     }
 })
 
-export const { setConnectedDeviceAtStore } = DeviceSlice.actions;
+export const { setConnectedDeviceInStore, clearConnectedDeviceInStore } = ConnectedDeviceSlice.actions;
 export const ConnectedDeviceStore = configureStore({
-    reducer: DeviceSlice.reducer
-})
+    reducer: ConnectedDeviceSlice.reducer
+});
 
-const LowerLimitSlice = createSlice({
-    name: 'LowerLimit',
+const DeviceServicesSlice = createSlice({
+    name: 'DeviceServices',
     initialState: {
-        value: 0
+        services: ""
     },
     reducers: {
-        setLowerLimit: (state, action) => {
-            state.value = action.payload
+        setDeviceServices: (state, action) => {
+            state.services = action.payload
+        },
+        clearDeviceServices: (state) => {
+            state.services = ""
         }
     }
 })
 
-export const { setLowerLimit } = LowerLimitSlice.actions;
-export const LowerLimitStore = configureStore({
-    reducer: LowerLimitSlice.reducer
+export const { setDeviceServices, clearDeviceServices } = DeviceServicesSlice.actions
+export const DeviceServicesStore = configureStore({
+    reducer: DeviceServicesSlice.reducer,
 })
 
-const UpperLimitSlice = createSlice({
-    'name': 'UpperLimit',
+const DeviceCharacteristicsSlice = createSlice({
+    name: 'DeviceCharacteristics',
     initialState: {
-        value: 0
+        characteristics: ""
     },
     reducers: {
-        setUpperLimit: (state, action) => {
-            state.value = action.payload
+        setDeviceCharacteristics: (state, action) => {
+            state.characteristics = action.payload
+        },
+        clearDeviceCharacteristics: (state) => {
+            state.characteristics = ""
         }
     }
 })
 
-export const { setUpperLimit } = UpperLimitSlice.actions;
-export const UpperLimitStore = configureStore({
-    reducer: UpperLimitSlice.reducer
-})
-
-
-// Hard
-
-const Hard_LowerLimitSlice = createSlice({
-    name: 'Hard_LowerLimit',
-    initialState: {
-        value: 0
-    },
-    reducers: {
-        setHard_LowerLimit: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
-
-export const { setHard_LowerLimit } = Hard_LowerLimitSlice.actions;
-export const Hard_LowerLimitStore = configureStore({
-    reducer: Hard_LowerLimitSlice.reducer
-})
-
-const Hard_UpperLimitSlice = createSlice({
-    'name': 'Hard_UpperLimit',
-    initialState: {
-        value: 0
-    },
-    reducers: {
-        setHard_UpperLimit: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
-
-export const { setHard_UpperLimit } = Hard_UpperLimitSlice.actions;
-export const Hard_UpperLimitStore = configureStore({
-    reducer: UpperLimitSlice.reducer
-})
-// Normal
-
-const Normal_LowerLimitSlice = createSlice({
-    name: 'Normal_LowerLimit',
-    initialState: {
-        value: 0
-    },
-    reducers: {
-        setNormal_LowerLimit: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
-
-export const { setNormal_LowerLimit } = Normal_LowerLimitSlice.actions;
-export const Normal_LowerLimitStore = configureStore({
-    reducer: Normal_LowerLimitSlice.reducer
-})
-
-const Normal_UpperLimitSlice = createSlice({
-    'name': 'Normal_UpperLimit',
-    initialState: {
-        value: 0
-    },
-    reducers: {
-        setNormal_UpperLimit: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
-
-export const { setNormal_UpperLimit } = Normal_UpperLimitSlice.actions;
-export const Normal_UpperLimitStore = configureStore({
-    reducer: UpperLimitSlice.reducer
+export const { setDeviceCharacteristics, clearDeviceCharacteristics } = DeviceCharacteristicsSlice.actions;
+export const DeviceCharacteristicsStore = configureStore({
+    reducer: DeviceCharacteristicsSlice.reducer
 })

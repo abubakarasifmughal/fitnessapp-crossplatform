@@ -1,21 +1,16 @@
-import { SafeAreaView, StyleSheet, } from 'react-native'
+import { SafeAreaView, StyleSheet, Text } from 'react-native'
 import React from 'react'
-import { BottomTabs } from './src/router/bottomtabs/BottomTabs';
-import VideoComponent from './src/components/VideoComponent';
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
-LogBox.ignoreAllLogs(); //Ignore all log notifications
+import BottomRouter from './src/routes/BottomRouter'
 
 
-export default function App() {
-
+const App = () => {
   return (
-    <SafeAreaView style={{ overflow: 'scroll' }}>
-      <BottomTabs />
-      <VideoComponent />
-      {/* <BT /> */}
+    <SafeAreaView style={{backgroundColor:'rgb(200,200,200)',height:"100%"}}>
+      <BottomRouter />
     </SafeAreaView>
   )
 }
+
+export default App
 
 const styles = StyleSheet.create({})
