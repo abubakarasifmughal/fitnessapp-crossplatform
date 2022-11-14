@@ -9,7 +9,7 @@ const SettingsRouter = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen component={Settings} name="Settings_stack" options={{ headerTitle: 'Settings' }} />
-      <Stack.Screen component={CalibrationPage} name="calibration_stack" options={{ headerTitle: "Calibration" }} />
+      <Stack.Screen component={CalibrationPage} name="Settings_calibration_stack" options={{ headerTitle: "Calibration" }} />
     </Stack.Navigator>
   )
 }

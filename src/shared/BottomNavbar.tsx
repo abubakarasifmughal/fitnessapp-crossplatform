@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+const BottomNavbar = ({ navigation, routes, activeRoute }: { navigation: any, routes: any[], activeRoute: string | undefined }) => {
 
-const BottomNavbar = ({ navigation, routes }: { navigation: any, routes: any[] }) => {
     return (
         <View style={styles.tabBarStyle}>
             {
@@ -11,8 +11,8 @@ const BottomNavbar = ({ navigation, routes }: { navigation: any, routes: any[] }
                         onPress={() => {
                             navigation.navigate(route.label)
                         }}>
-                        <Image source={route.icon} style={styles.icon} />
-                        <Text style={styles.label}>{route.label}</Text>
+                        <Image source={route.icon} style={[styles.icon,activeRoute?.includes(route.label)?{tintColor:'black'}:null]} />
+                        <Text style={[styles.label,activeRoute?.includes(route.label)?{color:'black'}:null]}>{route.label}</Text>
                     </TouchableOpacity>
                 ))
             }
@@ -39,10 +39,10 @@ const styles = StyleSheet.create({
         height: 20,
         width: 20,
         margin: 5,
-        tintColor:'grey'
+        tintColor: 'grey'
     },
     label: {
         fontSize: 10,
-        color:'grey'
+        color: 'grey'
     }
 })

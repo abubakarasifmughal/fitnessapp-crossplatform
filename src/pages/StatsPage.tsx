@@ -4,6 +4,7 @@ import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
 import Pie_Chart from '../components/Pie_Chart'
 import useBle from '../shared/Ble'
+import { ConnectedDeviceStore } from '../shared/Store'
 
 const TOTAL_SIDE_LENGTH = 165;
 
@@ -26,35 +27,46 @@ const StatsPage = ({ navigation }: any) => {
         setLiveData,
     } = useBle()
 
-    const ToggleLiveDataStreaming = () => {
-        setFetching(!Fetching)
-        if (Fetching) {
-            clearInterval(FetchingInteval)
-            setLiveData("Press to Start")
-        } else {
-            setFetchingInteval(setInterval(() => {
-                GetLiveData_Android((value) => {
-                    setLiveData(value)
-                })
-            }, 500))
-        }
+    const onPressStreamButton = () => {
+        GetLiveData_Android((value) => {
+            setLiveData(value)
+        })
     }
 
-    // useEffect(() => {
-    //     ToggleLiveDataStreaming()
-    // }, [])
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (ConnectedDeviceStore.getState().device !== "") {
+                onPressStreamButton()
+            }
+        }, 500)
+        return () => clearInterval(interval)
+    }, [])
+
+    // const ToggleLiveDataStreaming = () => {
+    //     setFetching(!Fetching)
+    //     if (Fetching) {
+    //         clearInterval(FetchingInteval)
+    //         setLiveData("Press to Start")
+    //     } else {
+    //         setFetchingInteval(setInterval(() => {
+    //             GetLiveData_Android((value) => {
+    //                 setLiveData(value)
+    //             })
+    //         }, 500))
+    //     }
+    // }
 
 
 
     const doZeroErrorCorrection = () => {
         if (!Fetching) {
-            ToggleLiveDataStreaming()
+            onPressStreamButton()
         }
         GetLiveData_Android((value => {
-            console.log("value",value);   
+            console.log("value", value);
             setZeroError(value)
         }))
-        
+
     }
 
 

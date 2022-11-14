@@ -6,7 +6,7 @@ import {
     DeviceCharacteristicsStore, setConnectedDeviceInStore,
     setDeviceCharacteristics, setDeviceServices
 } from '../shared/Store';
-import { LogBox, PermissionsAndroid, Platform } from 'react-native';
+import { Alert, LogBox, PermissionsAndroid, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -15,7 +15,7 @@ const bleManager = new BleManager();
 
 export default function useBle() {
     const [ScannedDevices, setScannedDevices] = useState<(Device | undefined)[]>([])
-    const [LiveData, setLiveData] = useState("")
+    const [LiveData, setLiveData] = useState("0")
 
     const isEnabled = () => {
         return bleManager.state();
@@ -45,6 +45,17 @@ export default function useBle() {
     }
 
     const StartScan = () => {
+
+        bleManager.state()
+            .then(val => {
+                if (val === "PoweredOff") {
+                    Alert.alert("Turn Bluetooth On", "Please turn on bluetooth in order to scan backaware unit")
+                    return
+                }
+            }).catch(val => {
+                return
+            })
+
         let scannedDevicesWithDuplicates: Device[] = [];
         const ScanTime = 2000;
         requestPermissions((result) => {
@@ -162,8 +173,6 @@ export default function useBle() {
                                                 .then(value => {
                                                     let numRead = Number.parseInt(base64.decode(value.value ?? ""))
                                                     if (numRead.toString() !== 'NaN') {
-                                                        console.log("Callback gonna return now");
-                                                        
                                                         return callback(numRead.toString())
                                                     }
                                                 })

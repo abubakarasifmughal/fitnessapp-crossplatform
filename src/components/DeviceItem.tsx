@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Platform, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Device } from 'react-native-ble-plx'
 import ConnectionState from '../shared/ConnectionState'
@@ -13,7 +13,6 @@ const DeviceItem = ({ device }: { device: Device | undefined }) => {
     } = useBle();
 
     ConnectedDeviceStore.subscribe(() => {
-        console.log("Connected");
         setConnectionState(ConnectionState.CONNECTED)
     })
 
@@ -23,6 +22,15 @@ const DeviceItem = ({ device }: { device: Device | undefined }) => {
             onPress={() => {
                 if (device) {
                     setConnectionState(ConnectionState.CONNECTING)
+                    setTimeout(() => {
+                        if (connectionState === ConnectionState.CONNECTED) {
+                            setConnectionState(ConnectionState.DISCONNECTED)
+                            Alert.alert(
+                                "Can't Connect",
+                                "Application cannot connect to the device please make sure that it is turned on and battery is charged properly",
+                                )
+                        }
+                    }, 4000);
                     ConnectToDevice(device)
                 }
             }}>
@@ -40,7 +48,7 @@ const DeviceItem = ({ device }: { device: Device | undefined }) => {
                 }
                 {
                     connectionState === ConnectionState.CONNECTED &&
-                    <Text style={{fontSize:18}}>✔️</Text>
+                    <Text style={{ fontSize: 18 }}>✔️</Text>
                 }
             </View>
         </TouchableOpacity>

@@ -16,8 +16,8 @@ const PlanStack = () => {
                 headerTintColor: 'black',
                 headerTitleAlign: 'center'
             }}>
-                {/* <Stack.Screen name={'Your Plan'} component={Plans} options={{}} /> */}
-                <Stack.Screen name={'Plan Detail'} component={PlanDetailPage} />
+                <Stack.Screen name={'Your Plans'} component={Plans} options={{}} />
+                <Stack.Screen name={'Plans Detail'} component={PlanDetailPage} />
             </Stack.Navigator>
         </View>
     )

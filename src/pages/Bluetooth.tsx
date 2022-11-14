@@ -106,7 +106,7 @@ const Settings = ({ navigation }: { navigation: any }) => {
 
             <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate('calibration_stack')
+                    navigation.navigate('Settings_calibration_stack')
                 }} style={[styles.metroButtonBlackExtended, { marginBottom: 15 }]}>
                 <Text style={styles.ButtonText}>Calibration Settings</Text>
             </TouchableOpacity>
