@@ -16,6 +16,7 @@ const bleManager = new BleManager();
 export default function useBle() {
     const [ScannedDevices, setScannedDevices] = useState<(Device | undefined)[]>([])
     const [LiveData, setLiveData] = useState("0")
+    const [isScanning, setIsScanning] = useState(false)
 
     const isEnabled = () => {
         return bleManager.state();
@@ -24,6 +25,7 @@ export default function useBle() {
     const StopScan = () => {
         bleManager.stopDeviceScan()
         console.log("Scanning Stopped");
+        setIsScanning(false)
     }
 
     const requestPermissions = async (callback: (granted: boolean) => void) => {
@@ -36,7 +38,7 @@ export default function useBle() {
         clearConnectedDeviceInStore()
         setScannedDevices([])
         console.log("Diconnecting Everywhere");
-
+        ConnectedDeviceStore.dispatch(setConnectedDeviceInStore(""))
     }
 
     const removeDuplicatesFromScannedDevices = (scannedDevices: Device[]) => {
@@ -64,6 +66,7 @@ export default function useBle() {
                 isEnabled()
                     .then(res => {
                         console.log("Scanning Initiating", res);
+                        setIsScanning(true)
                         bleManager.startDeviceScan([], { allowDuplicates: false }, (err, devices) => {
                             if (devices?.localName) {
                                 console.log("Devices", devices?.localName);
@@ -84,7 +87,7 @@ export default function useBle() {
         }, ScanTime);
     }
 
-    const ConnectToDevice = (device: Device) => {
+    const ConnectToDevice = (device: Device,callback: (connected:boolean) => void) => {
 
         bleManager.connectToDevice(device.id, {
             autoConnect: true, timeout: 2000, refreshGatt: 'OnConnected'
@@ -103,25 +106,30 @@ export default function useBle() {
                                         DeviceCharacteristicsStore.dispatch(setDeviceCharacteristics(JSON.stringify(char)))
                                         console.log("Device characteristics Stored in Ble");
                                         console.log("Loaded");
+                                        return callback(true)
                                     })
                                     .catch(err => {
                                         // console.log(err);
                                         // ConnectedDeviceStore.dispatch(clearConnectedDeviceInStore())
+                                        return callback(false)
                                     })
                             })
                             .catch(err => {
                                 // console.log(err);
                                 // ConnectedDeviceStore.dispatch(clearConnectedDeviceInStore())
+                                return callback(false)
                             })
                     })
                     .catch(err => {
                         // console.log(err);
                         // ConnectedDeviceStore.dispatch(clearConnectedDeviceInStore())
+                        return callback(false)
                     })
             })
             .catch(err => {
                 // console.log(err)
                 // ConnectedDeviceStore.dispatch(clearConnectedDeviceInStore())
+                return callback(false)
             })
     }
 
@@ -160,6 +168,9 @@ export default function useBle() {
 
     const GetLiveData_Android = async (callback: (value: string) => void) => {
         let device: Device = JSON.parse(ConnectedDeviceStore.getState().device) as Device
+
+        
+
         bleManager.discoverAllServicesAndCharacteristicsForDevice(device.id, 'scanAnd')
             .then(data => {
                 bleManager.servicesForDevice(data.id)
@@ -208,5 +219,6 @@ export default function useBle() {
         LiveData,
         setLiveData,
         GetLiveData_Android,
+        isScanning,
     }
 }

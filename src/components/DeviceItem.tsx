@@ -25,13 +25,14 @@ const DeviceItem = ({ device }: { device: Device | undefined }) => {
                     setTimeout(() => {
                         if (connectionState === ConnectionState.CONNECTED) {
                             setConnectionState(ConnectionState.DISCONNECTED)
-                            Alert.alert(
-                                "Can't Connect",
-                                "Application cannot connect to the device please make sure that it is turned on and battery is charged properly",
-                                )
                         }
                     }, 4000);
-                    ConnectToDevice(device)
+                    ConnectToDevice(device, (connected) => {
+                        if (connected) {
+                            console.log("Connected");
+                        }
+                        
+                    })
                 }
             }}>
             <View style={{

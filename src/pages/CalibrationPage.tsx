@@ -14,6 +14,7 @@ import {
   ConnectedDeviceStore
 } from '../shared/Store';
 import { LimitTypes } from '../shared/LimitTypes';
+import { Device } from 'react-native-ble-plx';
 
 const CalibrationPage = ({ navigation }: { navigation: any }) => {
   const [FetchingInteval, setFetchingInteval] = useState(0)
@@ -27,19 +28,26 @@ const CalibrationPage = ({ navigation }: { navigation: any }) => {
     GetLiveData_Android,
     LiveData,
     setLiveData,
+    ConnectToDevice,
   } = useBle()
   const onPressStreamButton = () => {
     GetLiveData_Android((value) => {
       setLiveData(value)
     })
   }
+
   useEffect(() => {
+    // if (ConnectedDeviceStore.getState().device !== "") {
+    //   let device: Device = JSON.parse(ConnectedDeviceStore.getState().device)
+    //   ConnectToDevice(device)
+    // }
     const interval = setInterval(() => {
       if (ConnectedDeviceStore.getState().device !== "") {
         onPressStreamButton()
       }
     }, 500)
     return () => clearInterval(interval)
+    
   }, [])
 
   const [SManualUpperLimit, setSManualUpperLimit] = useState(0)

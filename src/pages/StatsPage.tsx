@@ -4,11 +4,16 @@ import TestNameInputField from '../components/TestNameInputField'
 import PointerSlider from '../components/PointerSlider'
 import Pie_Chart from '../components/Pie_Chart'
 import useBle from '../shared/Ble'
-import { ConnectedDeviceStore } from '../shared/Store'
+import { ConnectedDeviceStore, LimitStore } from '../shared/Store'
+import { Device } from 'react-native-ble-plx'
 
 const TOTAL_SIDE_LENGTH = 165;
 
 const StatsPage = ({ navigation }: any) => {
+    // [Good, Average, Bad]
+    const [Distribution, setDistribution] = useState([10,8,1])
+
+    
     const [LowerBoundary, setLowerBoundary] = useState(-100)
     const [UpperBoundary, setUpperBoundary] = useState(100)
     const [PointerLocation, setPointerLocation] = useState(0)
@@ -20,56 +25,36 @@ const StatsPage = ({ navigation }: any) => {
 
     const [FetchingInteval, setFetchingInteval] = useState(0)
     const [Fetching, setFetching] = useState(false)
+    const [ConnectedToDevice, setConnectedToDevice] = useState(false)
 
     const {
         GetLiveData_Android,
         LiveData,
         setLiveData,
+        ConnectToDevice,
     } = useBle()
 
-    const onPressStreamButton = () => {
-        GetLiveData_Android((value) => {
-            setLiveData(value)
-        })
-    }
-
     useEffect(() => {
+        if (ConnectedDeviceStore.getState().device !== "") {
+            let device: Device = JSON.parse(ConnectedDeviceStore.getState().device)
+            ConnectToDevice(device, (connected => {
+                if (connected) {
+                    setConnectedToDevice(true)
+                }
+            }))
+        }
         const interval = setInterval(() => {
-            if (ConnectedDeviceStore.getState().device !== "") {
-                onPressStreamButton()
-            }
+            GetLiveData_Android((value) => {
+                setLiveData(value)
+            })
         }, 500)
         return () => clearInterval(interval)
     }, [])
 
-    // const ToggleLiveDataStreaming = () => {
-    //     setFetching(!Fetching)
-    //     if (Fetching) {
-    //         clearInterval(FetchingInteval)
-    //         setLiveData("Press to Start")
-    //     } else {
-    //         setFetchingInteval(setInterval(() => {
-    //             GetLiveData_Android((value) => {
-    //                 setLiveData(value)
-    //             })
-    //         }, 500))
-    //     }
-    // }
-
-
-
     const doZeroErrorCorrection = () => {
-        if (!Fetching) {
-            onPressStreamButton()
-        }
-        GetLiveData_Android((value => {
-            console.log("value", value);
-            setZeroError(value)
-        }))
-
+        setZeroError(LiveData)
+        console.log("Zeroed", ZeroError);
     }
-
-
 
     return (
         <>
@@ -91,14 +76,6 @@ const StatsPage = ({ navigation }: any) => {
                     pressHandler={() => { }
 
                     } />
-
-                <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => {
-                    setNegativeError(null)
-                    setPositiveError(null)
-                    setCalibrationInProgress(true)
-                }}>
-                    <Text style={{ color: 'rgb(90,90,240)', fontSize: 18 }}>Calibrate</Text>
-                </TouchableOpacity>
                 <PointerSlider
                     LowerBoundary={LowerBoundary}
                     UpperBoundary={UpperBoundary}
@@ -121,11 +98,19 @@ const StatsPage = ({ navigation }: any) => {
                     setUpperBoundary={setUpperBoundary}
                     setPointerLocation={setPointerLocation}
                 />
-                <StopButton
+                {/* <StopButton
                     setPointerLocation={setPointerLocation}
                     PointerLocation={PointerLocation}
-                />
-                <Pie_Chart />
+                /> */}
+                <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => {
+                    setNegativeError(null)
+                    setPositiveError(null)
+                    setCalibrationInProgress(true)
+                }}>
+                    <Text style={{ color: 'rgb(90,90,240)', fontSize: 18 }}>Calibrate</Text>
+                </TouchableOpacity>
+                {/* Good,average,Bad  */}
+                <Pie_Chart Series={Distribution} />
                 <View style={{ height: 20 }} />
 
                 <View style={[styles.RowMargined, {}]}>
@@ -141,13 +126,9 @@ const StatsPage = ({ navigation }: any) => {
             <Modal visible={CalibrationInProgress} animationType='slide' transparent={true}>
                 <View style={{ height: '100%', backgroundColor: 'rgba(0,0,0,0.9)', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ color: 'white', fontSize: 25, fontWeight: '600', marginBottom: 20 }}>Calibrate Device</Text>
-                    {
-                        ZeroError === 'NaN' &&
-                        <>
-
-                        </>
-                    }
-                    <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={doZeroErrorCorrection}>
+                    <TouchableOpacity style={{ padding: 10, alignSelf: 'center' }} onPress={() => {
+                        doZeroErrorCorrection()
+                    }}>
                         <Text style={{ color: 'rgb(70,70,255)', fontSize: 18 }}>Fix Zero</Text>
                     </TouchableOpacity>
                     {
@@ -233,15 +214,15 @@ const CalibrationButtons = (
 
     function onPressNormalCalibrate() {
         return () => {
-            setLowerBoundary(-50)
-            setUpperBoundary(50)
+            setLowerBoundary(-(LimitStore.getState().normalLowerLimit > TOTAL_SIDE_LENGTH ? TOTAL_SIDE_LENGTH : LimitStore.getState().normalLowerLimit))
+            setUpperBoundary(+(LimitStore.getState().normalUpperLimit > TOTAL_SIDE_LENGTH ? TOTAL_SIDE_LENGTH : LimitStore.getState().normalUpperLimit))
         }
     }
 
     function onPressHardCalibrate() {
         return () => {
-            setLowerBoundary(-100)
-            setUpperBoundary(100)
+            setLowerBoundary(-(LimitStore.getState().hardLowerLimit > TOTAL_SIDE_LENGTH ? TOTAL_SIDE_LENGTH : LimitStore.getState().hardLowerLimit))
+            setUpperBoundary(+(LimitStore.getState().hardUpperLimit > TOTAL_SIDE_LENGTH ? TOTAL_SIDE_LENGTH : LimitStore.getState().hardUpperLimit))
         }
     }
 }

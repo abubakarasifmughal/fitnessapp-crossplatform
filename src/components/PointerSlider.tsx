@@ -27,9 +27,8 @@ const PointerSlider = (
     const upperPointerBar = useRef(new Animated.Value(UpperBoundary)).current;
     const pointerLocation = useRef(new Animated.Value(0)).current;
 
-    
+
     useEffect(() => {
-        if(JSON.stringify(PointerLocation) !== 'null'){
         Animated.timing(lowerPointerBar, {
             toValue: LowerBoundary,
             useNativeDriver: true,
@@ -42,14 +41,14 @@ const PointerSlider = (
             duration: DURATION,
             easing: Easing.elastic(ELASTIC_AMOUNT)
         }).start()
-
-        Animated.timing(pointerLocation, {
-            toValue: PointerLocation,
-            useNativeDriver: true,
-            duration: POINTER_DURATION,
-            // easing: Easing.elastic(ELASTIC_AMOUNT)
-            easing: Easing.linear
-        }).start()
+        if (JSON.stringify(PointerLocation) !== 'null') {
+            Animated.timing(pointerLocation, {
+                toValue: PointerLocation > 165 || PointerLocation < -165 ? 0 : PointerLocation,
+                useNativeDriver: true,
+                duration: POINTER_DURATION,
+                // easing: Easing.elastic(ELASTIC_AMOUNT)
+                easing: Easing.linear
+            }).start()
         }
     }, [LowerBoundary, UpperBoundary, PointerLocation])
 
@@ -58,7 +57,7 @@ const PointerSlider = (
             <Text style={styles.PositionLabel}>Current Position</Text>
             <View style={styles.PointerSpace}>
                 <Animated.Image source={require('../../assets/pointer.png')}
-                    style={{ width: 40, height: 40, transform: [{ translateX:  pointerLocation }] }}
+                    style={{ width: 40, height: 40, transform: [{ translateX: pointerLocation }] }}
                     resizeMode="contain" />
 
             </View>

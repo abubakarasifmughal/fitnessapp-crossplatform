@@ -8,14 +8,13 @@ import { ApplicationMode } from '../shared/ApplicationMode'
 
 const Settings = ({ navigation }: { navigation: any }) => {
     const [Mode, setMode] = useState(ApplicationMode.GymMode)
+    const [Filter, setFilter] = useState(false)
 
     const {
         StartScan,
-        StopScan,
         ScannedDevices,
-        LiveData,
-        GetLiveData_Android,
-        setLiveData,
+        ClearBluetoothData,
+        isScanning,
     } = useBle();
 
     const onPressScanNow = () => {
@@ -23,7 +22,7 @@ const Settings = ({ navigation }: { navigation: any }) => {
     }
 
     const onPressStopScan = () => {
-        StopScan()
+        ClearBluetoothData()
     }
 
 
@@ -33,11 +32,11 @@ const Settings = ({ navigation }: { navigation: any }) => {
             <View style={{ flexDirection: 'row', width: '90%' }}>
                 <Text style={styles.h1Flexed}>Select Mode</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: '500' }}>{true ? "Scan all devices" : "BackAware only"}</Text>
+                    <Text style={{ marginLeft: 5, marginRight: 5, fontSize: 15, fontWeight: '500' }}>{!Filter ? "Scan all devices" : "BackAware only"}</Text>
                     <Switch
                         style={{ transform: [{ scale: 0.75 }] }}
-                        // onChange={() => setScanAllDevices(!scanAllDevices)}
-                        // value={scanAllDevices}
+                        onChange={() => setFilter(!Filter)}
+                        value={Filter}
                         ios_backgroundColor={'rgb(250,20,20)'}
                     />
                 </View>
@@ -73,13 +72,19 @@ const Settings = ({ navigation }: { navigation: any }) => {
 
             <View style={{ flexDirection: 'row', margin: 10, width: "90%" }}>
                 <MetroButtons
-                    label='Stop Scan'
+                    label={"Disconnect"}
                     onPressHandler={onPressStopScan}
+                    loader={false}
                 />
                 <View style={{ width: 10 }} />
                 <MetroButtons
+                    loader={isScanning}
                     label='Scan Now'
-                    onPressHandler={onPressScanNow}
+                    onPressHandler={() => {
+                        if (!isScanning) {
+                            onPressScanNow()
+                        }
+                    }}
                 />
             </View>
 
@@ -95,7 +100,7 @@ const Settings = ({ navigation }: { navigation: any }) => {
 
                     <View style={{ flex: 1 }}>
                         {
-                            ScannedDevices.map((d, i) => <DeviceItem key={i} device={d} />)
+                            ScannedDevices.filter(sd => Filter?sd?.localName?.toLowerCase().includes("backaware"):true).map((d, i) => <DeviceItem key={i} device={d} />)
                         }
                     </View>
 

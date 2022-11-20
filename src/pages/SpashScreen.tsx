@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
 const SpashScreen = () => {
@@ -7,7 +7,8 @@ const SpashScreen = () => {
             <Image source={require('../../assets/logo.png')}
                 resizeMode='contain'
             />
-            <Text style={{ fontSize: 20, fontWeight: '400' }}>Loading...</Text>
+            <Text style={{ fontSize: 20, fontWeight: '400',marginBottom:20 }}>Loading...</Text>
+            <ActivityIndicator />
         </View>
     )
 }

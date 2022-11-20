@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import { LineChart } from 'react-native-chart-kit'
 import useBle from '../shared/Ble';
-import { ConnectedDeviceStore, LimitStore,setWhichOneToBeFollowed } from '../shared/Store';
+import { ConnectedDeviceStore, LimitStore, setWhichOneToBeFollowed } from '../shared/Store';
 import { LimitTypes } from '../shared/LimitTypes';
+import { Device } from 'react-native-ble-plx';
 
 const NUM_OF_POINTS = 10;
 const StatsBarGraph = () => {
@@ -13,35 +14,71 @@ const StatsBarGraph = () => {
   const [UpperLimit, setUpperLimit] = useState(LimitStore.getState().manualUpperLimit)
   const [LowerLimit, setLowerLimit] = useState(LimitStore.getState().manualLowerLimit)
   const [Fetching, setFetching] = useState(false)
-
+  const [Connected, setConnected] = useState(false)
   const {
     GetLiveData_Android,
     LiveData,
     setLiveData,
+    ConnectToDevice,
   } = useBle()
-  const onPressStreamButton = () => {
-    GetLiveData_Android((value) => {
-      setLiveData(value)
-    })
-  }
+
   useEffect(() => {
     const interval = setInterval(() => {
-      if(ConnectedDeviceStore.getState().device !== ""){
-        onPressStreamButton()
+      if (ConnectedDeviceStore.getState().device !== "") {
+        let device: Device = JSON.parse(ConnectedDeviceStore.getState().device)
+        ConnectToDevice(device, (connected) => {
+          if (connected) {
+            setConnected(connected)
+          }
+        })
+      }
+      if (ConnectedDeviceStore.getState().device !== "") {
+        GetLiveData_Android((value) => {
+          setLiveData(value)
+          console.log("value", value);
+        })
+        console.log("Streaming");
       }
     }, 500)
     return () => clearInterval(interval)
   }, [])
+  useEffect(() => {
+    // let interval: number;
+    // if (ConnectedDeviceStore.getState().device !== "") {
+    //     console.log(ConnectedDeviceStore.getState().device);
+    //     let device: Device = JSON.parse(ConnectedDeviceStore.getState().device)
+    //     ConnectToDevice(device, (connected => {
+    //         if (connected) {
+    //             interval = setInterval(() => {
+    //                 if (ConnectedDeviceStore.getState().device !== "") {
+    //                     onPressStreamButton()
+    //                 }
+    //             }, 500)
+    //         }
+    //     }))
+    // }
+    // return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    console.log("Data Line");
+    setDataLine([...DataLine, Number.parseInt(LiveData) ?? 0])
+    if (DataLine.length > NUM_OF_POINTS) {
+      DataLine.shift()
+      setDataLine([...DataLine])
+    }
+  }, [LiveData])
+
 
 
   LimitStore.subscribe(() => {
-    if (LimitStore.getState().whichOneToBeFollowed === LimitTypes.NORMAL) {        
-        setUpperLimit(LimitStore.getState().normalUpperLimit ?? 0)
-        setLowerLimit(LimitStore.getState().normalLowerLimit ?? 0)
+    if (LimitStore.getState().whichOneToBeFollowed === LimitTypes.NORMAL) {
+      setUpperLimit(LimitStore.getState().normalUpperLimit ?? 0)
+      setLowerLimit(LimitStore.getState().normalLowerLimit ?? 0)
     }
     if (LimitStore.getState().whichOneToBeFollowed === LimitTypes.HARD) {
-        setUpperLimit(LimitStore.getState().hardUpperLimit ?? 0)
-        setLowerLimit(LimitStore.getState().hardLowerLimit ?? 0)
+      setUpperLimit(LimitStore.getState().hardUpperLimit ?? 0)
+      setLowerLimit(LimitStore.getState().hardLowerLimit ?? 0)
     }
   })
 
@@ -104,7 +141,7 @@ const StatsBarGraph = () => {
           bezier
         />
       </View>
-      <Text style={{ textAlign: 'center', marginBottom: 10 }}>Streaming Value {"LiveData"} {LimitStore.getState().whichOneToBeFollowed}</Text>
+      {/* <Text style={{ textAlign: 'center', marginBottom: 10 }}>Streaming Value {LiveData} </Text> */}
       <View style={{ flexDirection: 'row', marginLeft: 10, marginRight: 10, alignItems: 'center' }}>
         <TextInput style={{
           flex: 2,
@@ -116,7 +153,10 @@ const StatsBarGraph = () => {
             flex: 1, margin: 10, backgroundColor: 'black',
             padding: 10, borderRadius: 10, alignItems: 'center',
           }} onPress={() => {
-            onPressStreamButton()
+            GetLiveData_Android((value) => {
+              setLiveData(value)
+              console.log("value", value);
+            })
           }}>
           <Text style={{ fontSize: 20, color: 'white', }}>Start</Text>
         </TouchableOpacity>
